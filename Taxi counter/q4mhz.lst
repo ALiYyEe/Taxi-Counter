@@ -1,0 +1,356 @@
+MPASM  5.16                         Q4MHZ.ASM   3-30-2009  11:20:22         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001 ;
+                      00002 ;                       QUARTZ : 4MHz   (cycle : 1us)                   V1.0e
+                      00003 ;
+                      00004 ;                                                                       O.REZE  06/2003
+                      00005 ;-----------------------------------------------------------------------------------------
+                      00006 ;
+                      00007 ;       constantes a definir dans le programme principal:
+                      00008 ;                       - temp3, temp2, temp1
+                      00009 ;
+                      00010 ;
+                      00011 ;-----------------------------------------------------------------------------------------
+                      00012 ; Temporisation 350ms, 500ms, 1s
+                      00013 ;-----------------------------------------------------------------------------------------
+                      00014 
+Error[150]  : Labels must be defined in a code or data section when making an object file
+0000                  00015 Tempo_1s:
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00016         movlw   d'100'          ;1 cycle
+Error[113]  : Symbol not previously defined (temp3)
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00017         movwf   temp3           ;1 cycle
+Error[151]  : Operand contains unresolvable labels or is too complex
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00018         goto    tempo2          ;2 cycles
+                      00019 
+Error[150]  : Labels must be defined in a code or data section when making an object file
+0000                  00020 Tempo_500ms:
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00021         movlw   d'50'           ;1 cycle
+Error[113]  : Symbol not previously defined (temp3)
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00022         movwf   temp3           ;1 cycle
+Error[151]  : Operand contains unresolvable labels or is too complex
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00023         goto    tempo2          ;2 cycles
+                      00024 
+Error[150]  : Labels must be defined in a code or data section when making an object file
+0000                  00025 Tempo_350ms:
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00026         movlw   d'35'           ;1 cycle
+Error[113]  : Symbol not previously defined (temp3)
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00027         movwf   temp3           ;1 cycle
+Error[151]  : Operand contains unresolvable labels or is too complex
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00028         goto    tempo2          ;2 cycles
+                      00029 
+Error[150]  : Labels must be defined in a code or data section when making an object file
+0000                  00030 tempo2:
+Error[151]  : Operand contains unresolvable labels or is too complex
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00031         call    Tempo_10ms      ;
+Error[113]  : Symbol not previously defined (temp3)
+MPASM  5.16                         Q4MHZ.ASM   3-30-2009  11:20:22         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00032         decfsz  temp3,1         ;2 cycles si temp1=0 sinon 1 cycle
+Error[151]  : Operand contains unresolvable labels or is too complex
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00033         goto    tempo2          ;2 cycles
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00034         return                  
+                      00035 
+                      00036 ;-----------------------------------------------------------------------------------------
+                      00037 ; Temporisation 10ms, 30ms, 100ms, 150ms, 200ms
+                      00038 ;-----------------------------------------------------------------------------------------
+                      00039 
+Error[150]  : Labels must be defined in a code or data section when making an object file
+0000                  00040 Tempo_200ms:
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00041         movlw   d'200'          ;1 cycle
+Error[113]  : Symbol not previously defined (temp2)
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00042         movwf   temp2           ;1 cycle
+Error[151]  : Operand contains unresolvable labels or is too complex
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00043         goto    tempo1          ;2 cycles
+                      00044 
+Error[150]  : Labels must be defined in a code or data section when making an object file
+0000                  00045 Tempo_150ms:
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00046         movlw   d'150'          ;1 cycle
+Error[113]  : Symbol not previously defined (temp2)
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00047         movwf   temp2           ;1 cycle
+Error[151]  : Operand contains unresolvable labels or is too complex
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00048         goto    tempo1          ;2 cycles
+                      00049 
+Error[150]  : Labels must be defined in a code or data section when making an object file
+0000                  00050 Tempo_100ms:
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00051         movlw   d'100'          ;1 cycle
+Error[113]  : Symbol not previously defined (temp2)
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00052         movwf   temp2           ;1 cycle
+Error[151]  : Operand contains unresolvable labels or is too complex
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00053         goto    tempo1          ;2 cycles
+                      00054 
+Error[150]  : Labels must be defined in a code or data section when making an object file
+0000                  00055 Tempo_30ms:
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00056         movlw   d'30'           ;1 cycle
+Error[113]  : Symbol not previously defined (temp2)
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00057         movwf   temp2           ;1 cycle
+Error[151]  : Operand contains unresolvable labels or is too complex
+MPASM  5.16                         Q4MHZ.ASM   3-30-2009  11:20:22         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00058         goto    tempo1          ;2 cycles
+                      00059 
+Error[150]  : Labels must be defined in a code or data section when making an object file
+0000                  00060 Tempo_10ms:
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00061         movlw   d'10'           ;1 cycle
+Error[113]  : Symbol not previously defined (temp2)
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00062         movwf   temp2           ;1 cycle
+                      00063         
+Error[150]  : Labels must be defined in a code or data section when making an object file
+0000                  00064 tempo1:
+Error[151]  : Operand contains unresolvable labels or is too complex
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00065         call    Tempo_1ms       ;
+Error[113]  : Symbol not previously defined (temp2)
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00066         decfsz  temp2,1         ;2 cycles si temp1=0 sinon 1 cycle
+Error[151]  : Operand contains unresolvable labels or is too complex
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00067         goto    tempo1          ;2 cycles
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00068         return                  
+                      00069 
+                      00070 ;-----------------------------------------------------------------------------------------
+                      00071 ; Temporisation 1530us
+                      00072 ;-----------------------------------------------------------------------------------------
+                      00073 
+                      00074 
+                      00075 
+Error[150]  : Labels must be defined in a code or data section when making an object file
+0000                  00076 Tempo_1530us:                   ;1530us soit 1530 cycles        (temp1*4)+4
+Error[151]  : Operand contains unresolvable labels or is too complex
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00077         call    Tempo_1ms
+Error[151]  : Operand contains unresolvable labels or is too complex
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00078         call    Tempo_530us
+                      00079 
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00080         return
+                      00081 
+                      00082 
+                      00083 
+                      00084 ;-----------------------------------------------------------------------------------------
+                      00085 ; Temporisation 1ms, 530us, 250us
+                      00086 ;-----------------------------------------------------------------------------------------
+                      00087 
+                      00088 
+                      00089 
+Error[150]  : Labels must be defined in a code or data section when making an object file
+0000                  00090 Tempo_1ms:                      ;1ms soit 1000 cycles   (temp1*4)+4
+MPASM  5.16                         Q4MHZ.ASM   3-30-2009  11:20:22         PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00091         movlw   d'249'          ;1 cycle
+Error[113]  : Symbol not previously defined (temp1)
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00092         movwf   temp1           ;1 cycle
+Error[151]  : Operand contains unresolvable labels or is too complex
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00093         goto    tempo           ;2 cycles
+                      00094 
+Error[150]  : Labels must be defined in a code or data section when making an object file
+0000                  00095 Tempo_530us:                    ;532us soit 532 cycles  (temp1*4)+4
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00096         movlw   d'132'          ;1 cycle
+Error[113]  : Symbol not previously defined (temp1)
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00097         movwf   temp1           ;1 cycle
+Error[151]  : Operand contains unresolvable labels or is too complex
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00098         goto    tempo           ;2 cycles
+                      00099 
+Error[150]  : Labels must be defined in a code or data section when making an object file
+0000                  00100 Tempo_250us:                    ;532us soit 532 cycles  (temp1*4)+4
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00101         movlw   d'62'           ;1 cycle
+Error[113]  : Symbol not previously defined (temp1)
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00102         movwf   temp1           ;1 cycle
+                      00103 ;       goto    tempo           ;2 cycles
+                      00104         
+Error[150]  : Labels must be defined in a code or data section when making an object file
+0000                  00105 tempo:
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00106         nop                     ;1 cycle
+Error[113]  : Symbol not previously defined (temp1)
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00107         decfsz  temp1,1         ;2 cycles si temp1=0 sinon 1 cycle
+Error[151]  : Operand contains unresolvable labels or is too complex
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00108         goto    tempo           ;2 cycles
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00109         return
+                      00110 
+                      00111 
+                      00112 ;-----------------------------------------------------------------------------------------
+                      00113 ; Temporisation 11us, 39us, 43us
+                      00114 ;-----------------------------------------------------------------------------------------
+                      00115 
+Error[150]  : Labels must be defined in a code or data section when making an object file
+0000                  00116 Tempo_43us:                     ;43us soit 43 cycles    (temp1*3)+2
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00117         movlw   d'14'           ;1 cycle
+Error[113]  : Symbol not previously defined (temp1)
+Error[152]  : Executable code and data must be defined in an appropriate section
+MPASM  5.16                         Q4MHZ.ASM   3-30-2009  11:20:22         PAGE  5
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0000                  00118         movwf   temp1           ;1 cycle
+Error[150]  : Labels must be defined in a code or data section when making an object file
+0000                  00119 Tempo_43:
+Error[113]  : Symbol not previously defined (temp1)
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00120         decfsz  temp1,1         ;2 cycles si temp1=0 sinon 1 cycle
+Error[151]  : Operand contains unresolvable labels or is too complex
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00121         goto    Tempo_43        ;2 cycles
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00122         return
+                      00123 
+                      00124 
+Error[150]  : Labels must be defined in a code or data section when making an object file
+0000                  00125 Tempo_39us:                     ;39us soit 39 cycles    (temp1*3)+2
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00126         movlw   d'12'           ;1 cycle
+Error[113]  : Symbol not previously defined (temp1)
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00127         movwf   temp1           ;1 cycle
+Error[150]  : Labels must be defined in a code or data section when making an object file
+0000                  00128 Tempo_39:
+Error[113]  : Symbol not previously defined (temp1)
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00129         decfsz  temp1,1         ;2 cycles si temp1=0 sinon 1 cycle
+Error[151]  : Operand contains unresolvable labels or is too complex
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00130         goto    Tempo_39        ;2 cycles
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00131         return
+                      00132 
+Error[150]  : Labels must be defined in a code or data section when making an object file
+0000                  00133 Tempo_12us:                     ;11us soit 11 cycles    (temp1*3)+3
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00134         movlw   d'3'            ;1 cycle
+Error[113]  : Symbol not previously defined (temp1)
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00135         movwf   temp1           ;1 cycle
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00136         nop
+Error[150]  : Labels must be defined in a code or data section when making an object file
+0000                  00137 Tempo_12:
+Error[113]  : Symbol not previously defined (temp1)
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00138         decfsz  temp1,1         ;2 cycles si temp1=0 sinon 1 cycle
+Error[151]  : Operand contains unresolvable labels or is too complex
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00139         goto    Tempo_11        ;2 cycles
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00140         return
+                      00141 
+                      00142 
+Error[150]  : Labels must be defined in a code or data section when making an object file
+MPASM  5.16                         Q4MHZ.ASM   3-30-2009  11:20:22         PAGE  6
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0000                  00143 Tempo_11us:                     ;11us soit 11 cycles    (temp1*3)+2
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00144         movlw   d'3'            ;1 cycle
+Error[113]  : Symbol not previously defined (temp1)
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00145         movwf   temp1           ;1 cycle
+Error[150]  : Labels must be defined in a code or data section when making an object file
+0000                  00146 Tempo_11:
+Error[113]  : Symbol not previously defined (temp1)
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00147         decfsz  temp1,1         ;2 cycles si temp1=0 sinon 1 cycle
+Error[151]  : Operand contains unresolvable labels or is too complex
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00148         goto    Tempo_11        ;2 cycles
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00149         return
+                      00150 
+Error[129]  : Expected (END)
+MPASM  5.16                         Q4MHZ.ASM   3-30-2009  11:20:22         PAGE  7
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+Tempo_100ms                       00000000
+Tempo_10ms                        00000000
+Tempo_11                          00000000
+Tempo_11us                        00000000
+Tempo_12                          00000000
+Tempo_12us                        00000000
+Tempo_150ms                       00000000
+Tempo_1530us                      00000000
+Tempo_1ms                         00000000
+Tempo_1s                          00000000
+Tempo_200ms                       00000000
+Tempo_250us                       00000000
+Tempo_30ms                        00000000
+Tempo_350ms                       00000000
+Tempo_39                          00000000
+Tempo_39us                        00000000
+Tempo_43                          00000000
+Tempo_43us                        00000000
+Tempo_500ms                       00000000
+Tempo_530us                       00000000
+__16F876A                         00000001
+__DEBUG                           1
+tempo                             00000000
+tempo1                            00000000
+tempo2                            00000000
+
+Errors   :   133
+Warnings :     0 reported,     0 suppressed
+Messages :     0 reported,     0 suppressed
+
+

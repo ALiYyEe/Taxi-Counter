@@ -1,0 +1,82 @@
+Message[302] C:\COMPT_TAXI\MAIN.ASM 361 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\COMPT_TAXI\MAIN.ASM 374 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\COMPT_TAXI\MAIN.ASM 388 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\COMPT_TAXI\MAIN.ASM 402 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\COMPT_TAXI\MAIN.ASM 415 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\COMPT_TAXI\MAIN.ASM 429 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\COMPT_TAXI\MAIN.ASM 442 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\COMPT_TAXI\MAIN.ASM 455 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\COMPT_TAXI\MAIN.ASM 468 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[305] C:\COMPT_TAXI\MAIN.ASM 503 : Using default destination of 1 (file).
+Warning[207] C:\COMPT_TAXI\MAIN.ASM 512 : Found label after column 1. (e41)
+Warning[207] C:\COMPT_TAXI\MAIN.ASM 521 : Found label after column 1. (e10)
+Message[305] C:\COMPT_TAXI\MAIN.ASM 525 : Using default destination of 1 (file).
+Message[305] C:\COMPT_TAXI\MAIN.ASM 526 : Using default destination of 1 (file).
+Message[305] C:\COMPT_TAXI\MAIN.ASM 532 : Using default destination of 1 (file).
+Message[305] C:\COMPT_TAXI\MAIN.ASM 534 : Using default destination of 1 (file).
+Message[305] C:\COMPT_TAXI\MAIN.ASM 540 : Using default destination of 1 (file).
+Message[305] C:\COMPT_TAXI\MAIN.ASM 542 : Using default destination of 1 (file).
+Message[305] C:\COMPT_TAXI\MAIN.ASM 552 : Using default destination of 1 (file).
+Warning[207] C:\COMPT_TAXI\MAIN.ASM 557 : Found label after column 1. (e40)
+Warning[207] C:\COMPT_TAXI\MAIN.ASM 560 : Found label after column 1. (e61)
+Message[305] C:\COMPT_TAXI\MAIN.ASM 564 : Using default destination of 1 (file).
+Message[305] C:\COMPT_TAXI\MAIN.ASM 570 : Using default destination of 1 (file).
+Warning[207] C:\COMPT_TAXI\MAIN.ASM 572 : Found label after column 1. (e31)
+Message[305] C:\COMPT_TAXI\MAIN.ASM 572 : Using default destination of 1 (file).
+Message[305] C:\COMPT_TAXI\MAIN.ASM 578 : Using default destination of 1 (file).
+Message[305] C:\COMPT_TAXI\MAIN.ASM 580 : Using default destination of 1 (file).
+Message[305] C:\COMPT_TAXI\MAIN.ASM 586 : Using default destination of 1 (file).
+Message[305] C:\COMPT_TAXI\MAIN.ASM 588 : Using default destination of 1 (file).
+Message[305] C:\COMPT_TAXI\MAIN.ASM 598 : Using default destination of 1 (file).
+Warning[207] C:\COMPT_TAXI\MAIN.ASM 602 : Found label after column 1. (e30)
+Message[305] C:\COMPT_TAXI\MAIN.ASM 603 : Using default destination of 1 (file).
+Warning[207] C:\COMPT_TAXI\MAIN.ASM 608 : Found label after column 1. (e20)
+Message[302] C:\COMPT_TAXI\MAIN.ASM 730 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\COMPT_TAXI\MAIN.ASM 732 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\COMPT_TAXI\MAIN.ASM 734 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\COMPT_TAXI\MAIN.ASM 736 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\COMPT_TAXI\MAIN.ASM 741 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\COMPT_TAXI\MAIN.ASM 748 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\COMPT_TAXI\MAIN.ASM 750 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[305] C:\COMPT_TAXI\MAIN.ASM 795 : Using default destination of 1 (file).
+Message[305] C:\COMPT_TAXI\MAIN.ASM 812 : Using default destination of 1 (file).
+Message[305] C:\COMPT_TAXI\MAIN.ASM 847 : Using default destination of 1 (file).
+Message[305] C:\COMPT_TAXI\MAIN.ASM 922 : Using default destination of 1 (file).
+Message[302] C:\COMPT_TAXI\MAIN.ASM 928 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[305] C:\COMPT_TAXI\MAIN.ASM 987 : Using default destination of 1 (file).
+Message[305] C:\COMPT_TAXI\MAIN.ASM 990 : Using default destination of 1 (file).
+Message[305] C:\COMPT_TAXI\MAIN.ASM 993 : Using default destination of 1 (file).
+Message[305] C:\COMPT_TAXI\MAIN.ASM 1002 : Using default destination of 1 (file).
+Message[305] C:\COMPT_TAXI\MAIN.ASM 1005 : Using default destination of 1 (file).
+Message[305] C:\COMPT_TAXI\MAIN.ASM 1008 : Using default destination of 1 (file).
+Message[305] C:\COMPT_TAXI\MAIN.ASM 1018 : Using default destination of 1 (file).
+Message[305] C:\COMPT_TAXI\MAIN.ASM 1021 : Using default destination of 1 (file).
+Message[305] C:\COMPT_TAXI\MAIN.ASM 1024 : Using default destination of 1 (file).
+Message[305] C:\COMPT_TAXI\MAIN.ASM 1027 : Using default destination of 1 (file).
+Message[305] C:\COMPT_TAXI\MAIN.ASM 1035 : Using default destination of 1 (file).
+Message[305] C:\COMPT_TAXI\MAIN.ASM 1038 : Using default destination of 1 (file).
+Message[305] C:\COMPT_TAXI\MAIN.ASM 1041 : Using default destination of 1 (file).
+Message[305] C:\COMPT_TAXI\MAIN.ASM 1044 : Using default destination of 1 (file).
+Message[305] C:\COMPT_TAXI\MAIN.ASM 1052 : Using default destination of 1 (file).
+Message[305] C:\COMPT_TAXI\MAIN.ASM 1055 : Using default destination of 1 (file).
+Message[305] C:\COMPT_TAXI\MAIN.ASM 1058 : Using default destination of 1 (file).
+Message[305] C:\COMPT_TAXI\MAIN.ASM 1061 : Using default destination of 1 (file).
+Message[305] C:\COMPT_TAXI\MAIN.ASM 1073 : Using default destination of 1 (file).
+Message[305] C:\COMPT_TAXI\MAIN.ASM 1076 : Using default destination of 1 (file).
+Message[305] C:\COMPT_TAXI\MAIN.ASM 1079 : Using default destination of 1 (file).
+Message[305] C:\COMPT_TAXI\MAIN.ASM 1082 : Using default destination of 1 (file).
+Message[305] C:\COMPT_TAXI\MAIN.ASM 1090 : Using default destination of 1 (file).
+Message[305] C:\COMPT_TAXI\MAIN.ASM 1093 : Using default destination of 1 (file).
+Message[305] C:\COMPT_TAXI\MAIN.ASM 1096 : Using default destination of 1 (file).
+Message[305] C:\COMPT_TAXI\MAIN.ASM 1099 : Using default destination of 1 (file).
+Message[305] C:\COMPT_TAXI\MAIN.ASM 1107 : Using default destination of 1 (file).
+Message[305] C:\COMPT_TAXI\MAIN.ASM 1110 : Using default destination of 1 (file).
+Message[305] C:\COMPT_TAXI\MAIN.ASM 1113 : Using default destination of 1 (file).
+Message[305] C:\COMPT_TAXI\MAIN.ASM 1116 : Using default destination of 1 (file).
+Message[305] C:\COMPT_TAXI\MAIN.ASM 1153 : Using default destination of 1 (file).
+Message[305] C:\COMPT_TAXI\MAIN.ASM 1187 : Using default destination of 1 (file).
+Message[305] C:\COMPT_TAXI\MAIN.ASM 1228 : Using default destination of 1 (file).
+Message[305] C:\COMPT_TAXI\MAIN.ASM 1241 : Using default destination of 1 (file).
+Message[305] C:\COMPT_TAXI\MAIN.ASM 1250 : Using default destination of 1 (file).
+Message[305] C:\COMPT_TAXI\MAIN.ASM 1259 : Using default destination of 1 (file).
+Message[305] C:\COMPT_TAXI\MAIN.ASM 1268 : Using default destination of 1 (file).

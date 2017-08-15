@@ -1,0 +1,133 @@
+Error[150]   C:\COMPTPULSE\Q4MHZ.ASM 15 : Labels must be defined in a code or data section when making an object file
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 16 : Executable code and data must be defined in an appropriate section
+Error[113]   C:\COMPTPULSE\Q4MHZ.ASM 17 : Symbol not previously defined (temp3)
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 17 : Executable code and data must be defined in an appropriate section
+Error[151]   C:\COMPTPULSE\Q4MHZ.ASM 18 : Operand contains unresolvable labels or is too complex
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 18 : Executable code and data must be defined in an appropriate section
+Error[150]   C:\COMPTPULSE\Q4MHZ.ASM 20 : Labels must be defined in a code or data section when making an object file
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 21 : Executable code and data must be defined in an appropriate section
+Error[113]   C:\COMPTPULSE\Q4MHZ.ASM 22 : Symbol not previously defined (temp3)
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 22 : Executable code and data must be defined in an appropriate section
+Error[151]   C:\COMPTPULSE\Q4MHZ.ASM 23 : Operand contains unresolvable labels or is too complex
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 23 : Executable code and data must be defined in an appropriate section
+Error[150]   C:\COMPTPULSE\Q4MHZ.ASM 25 : Labels must be defined in a code or data section when making an object file
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 26 : Executable code and data must be defined in an appropriate section
+Error[113]   C:\COMPTPULSE\Q4MHZ.ASM 27 : Symbol not previously defined (temp3)
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 27 : Executable code and data must be defined in an appropriate section
+Error[151]   C:\COMPTPULSE\Q4MHZ.ASM 28 : Operand contains unresolvable labels or is too complex
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 28 : Executable code and data must be defined in an appropriate section
+Error[150]   C:\COMPTPULSE\Q4MHZ.ASM 30 : Labels must be defined in a code or data section when making an object file
+Error[151]   C:\COMPTPULSE\Q4MHZ.ASM 31 : Operand contains unresolvable labels or is too complex
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 31 : Executable code and data must be defined in an appropriate section
+Error[113]   C:\COMPTPULSE\Q4MHZ.ASM 32 : Symbol not previously defined (temp3)
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 32 : Executable code and data must be defined in an appropriate section
+Error[151]   C:\COMPTPULSE\Q4MHZ.ASM 33 : Operand contains unresolvable labels or is too complex
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 33 : Executable code and data must be defined in an appropriate section
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 34 : Executable code and data must be defined in an appropriate section
+Error[150]   C:\COMPTPULSE\Q4MHZ.ASM 40 : Labels must be defined in a code or data section when making an object file
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 41 : Executable code and data must be defined in an appropriate section
+Error[113]   C:\COMPTPULSE\Q4MHZ.ASM 42 : Symbol not previously defined (temp2)
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 42 : Executable code and data must be defined in an appropriate section
+Error[151]   C:\COMPTPULSE\Q4MHZ.ASM 43 : Operand contains unresolvable labels or is too complex
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 43 : Executable code and data must be defined in an appropriate section
+Error[150]   C:\COMPTPULSE\Q4MHZ.ASM 45 : Labels must be defined in a code or data section when making an object file
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 46 : Executable code and data must be defined in an appropriate section
+Error[113]   C:\COMPTPULSE\Q4MHZ.ASM 47 : Symbol not previously defined (temp2)
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 47 : Executable code and data must be defined in an appropriate section
+Error[151]   C:\COMPTPULSE\Q4MHZ.ASM 48 : Operand contains unresolvable labels or is too complex
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 48 : Executable code and data must be defined in an appropriate section
+Error[150]   C:\COMPTPULSE\Q4MHZ.ASM 50 : Labels must be defined in a code or data section when making an object file
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 51 : Executable code and data must be defined in an appropriate section
+Error[113]   C:\COMPTPULSE\Q4MHZ.ASM 52 : Symbol not previously defined (temp2)
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 52 : Executable code and data must be defined in an appropriate section
+Error[151]   C:\COMPTPULSE\Q4MHZ.ASM 53 : Operand contains unresolvable labels or is too complex
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 53 : Executable code and data must be defined in an appropriate section
+Error[150]   C:\COMPTPULSE\Q4MHZ.ASM 55 : Labels must be defined in a code or data section when making an object file
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 56 : Executable code and data must be defined in an appropriate section
+Error[113]   C:\COMPTPULSE\Q4MHZ.ASM 57 : Symbol not previously defined (temp2)
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 57 : Executable code and data must be defined in an appropriate section
+Error[151]   C:\COMPTPULSE\Q4MHZ.ASM 58 : Operand contains unresolvable labels or is too complex
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 58 : Executable code and data must be defined in an appropriate section
+Error[150]   C:\COMPTPULSE\Q4MHZ.ASM 60 : Labels must be defined in a code or data section when making an object file
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 61 : Executable code and data must be defined in an appropriate section
+Error[113]   C:\COMPTPULSE\Q4MHZ.ASM 62 : Symbol not previously defined (temp2)
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 62 : Executable code and data must be defined in an appropriate section
+Error[150]   C:\COMPTPULSE\Q4MHZ.ASM 64 : Labels must be defined in a code or data section when making an object file
+Error[151]   C:\COMPTPULSE\Q4MHZ.ASM 65 : Operand contains unresolvable labels or is too complex
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 65 : Executable code and data must be defined in an appropriate section
+Error[113]   C:\COMPTPULSE\Q4MHZ.ASM 66 : Symbol not previously defined (temp2)
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 66 : Executable code and data must be defined in an appropriate section
+Error[151]   C:\COMPTPULSE\Q4MHZ.ASM 67 : Operand contains unresolvable labels or is too complex
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 67 : Executable code and data must be defined in an appropriate section
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 68 : Executable code and data must be defined in an appropriate section
+Error[150]   C:\COMPTPULSE\Q4MHZ.ASM 76 : Labels must be defined in a code or data section when making an object file
+Error[151]   C:\COMPTPULSE\Q4MHZ.ASM 77 : Operand contains unresolvable labels or is too complex
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 77 : Executable code and data must be defined in an appropriate section
+Error[151]   C:\COMPTPULSE\Q4MHZ.ASM 78 : Operand contains unresolvable labels or is too complex
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 78 : Executable code and data must be defined in an appropriate section
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 80 : Executable code and data must be defined in an appropriate section
+Error[150]   C:\COMPTPULSE\Q4MHZ.ASM 90 : Labels must be defined in a code or data section when making an object file
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 91 : Executable code and data must be defined in an appropriate section
+Error[113]   C:\COMPTPULSE\Q4MHZ.ASM 92 : Symbol not previously defined (temp1)
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 92 : Executable code and data must be defined in an appropriate section
+Error[151]   C:\COMPTPULSE\Q4MHZ.ASM 93 : Operand contains unresolvable labels or is too complex
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 93 : Executable code and data must be defined in an appropriate section
+Error[150]   C:\COMPTPULSE\Q4MHZ.ASM 95 : Labels must be defined in a code or data section when making an object file
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 96 : Executable code and data must be defined in an appropriate section
+Error[113]   C:\COMPTPULSE\Q4MHZ.ASM 97 : Symbol not previously defined (temp1)
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 97 : Executable code and data must be defined in an appropriate section
+Error[151]   C:\COMPTPULSE\Q4MHZ.ASM 98 : Operand contains unresolvable labels or is too complex
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 98 : Executable code and data must be defined in an appropriate section
+Error[150]   C:\COMPTPULSE\Q4MHZ.ASM 100 : Labels must be defined in a code or data section when making an object file
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 101 : Executable code and data must be defined in an appropriate section
+Error[113]   C:\COMPTPULSE\Q4MHZ.ASM 102 : Symbol not previously defined (temp1)
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 102 : Executable code and data must be defined in an appropriate section
+Error[150]   C:\COMPTPULSE\Q4MHZ.ASM 105 : Labels must be defined in a code or data section when making an object file
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 106 : Executable code and data must be defined in an appropriate section
+Error[113]   C:\COMPTPULSE\Q4MHZ.ASM 107 : Symbol not previously defined (temp1)
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 107 : Executable code and data must be defined in an appropriate section
+Error[151]   C:\COMPTPULSE\Q4MHZ.ASM 108 : Operand contains unresolvable labels or is too complex
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 108 : Executable code and data must be defined in an appropriate section
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 109 : Executable code and data must be defined in an appropriate section
+Error[150]   C:\COMPTPULSE\Q4MHZ.ASM 116 : Labels must be defined in a code or data section when making an object file
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 117 : Executable code and data must be defined in an appropriate section
+Error[113]   C:\COMPTPULSE\Q4MHZ.ASM 118 : Symbol not previously defined (temp1)
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 118 : Executable code and data must be defined in an appropriate section
+Error[150]   C:\COMPTPULSE\Q4MHZ.ASM 119 : Labels must be defined in a code or data section when making an object file
+Error[113]   C:\COMPTPULSE\Q4MHZ.ASM 120 : Symbol not previously defined (temp1)
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 120 : Executable code and data must be defined in an appropriate section
+Error[151]   C:\COMPTPULSE\Q4MHZ.ASM 121 : Operand contains unresolvable labels or is too complex
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 121 : Executable code and data must be defined in an appropriate section
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 122 : Executable code and data must be defined in an appropriate section
+Error[150]   C:\COMPTPULSE\Q4MHZ.ASM 125 : Labels must be defined in a code or data section when making an object file
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 126 : Executable code and data must be defined in an appropriate section
+Error[113]   C:\COMPTPULSE\Q4MHZ.ASM 127 : Symbol not previously defined (temp1)
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 127 : Executable code and data must be defined in an appropriate section
+Error[150]   C:\COMPTPULSE\Q4MHZ.ASM 128 : Labels must be defined in a code or data section when making an object file
+Error[113]   C:\COMPTPULSE\Q4MHZ.ASM 129 : Symbol not previously defined (temp1)
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 129 : Executable code and data must be defined in an appropriate section
+Error[151]   C:\COMPTPULSE\Q4MHZ.ASM 130 : Operand contains unresolvable labels or is too complex
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 130 : Executable code and data must be defined in an appropriate section
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 131 : Executable code and data must be defined in an appropriate section
+Error[150]   C:\COMPTPULSE\Q4MHZ.ASM 133 : Labels must be defined in a code or data section when making an object file
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 134 : Executable code and data must be defined in an appropriate section
+Error[113]   C:\COMPTPULSE\Q4MHZ.ASM 135 : Symbol not previously defined (temp1)
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 135 : Executable code and data must be defined in an appropriate section
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 136 : Executable code and data must be defined in an appropriate section
+Error[150]   C:\COMPTPULSE\Q4MHZ.ASM 137 : Labels must be defined in a code or data section when making an object file
+Error[113]   C:\COMPTPULSE\Q4MHZ.ASM 138 : Symbol not previously defined (temp1)
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 138 : Executable code and data must be defined in an appropriate section
+Error[151]   C:\COMPTPULSE\Q4MHZ.ASM 139 : Operand contains unresolvable labels or is too complex
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 139 : Executable code and data must be defined in an appropriate section
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 140 : Executable code and data must be defined in an appropriate section
+Error[150]   C:\COMPTPULSE\Q4MHZ.ASM 143 : Labels must be defined in a code or data section when making an object file
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 144 : Executable code and data must be defined in an appropriate section
+Error[113]   C:\COMPTPULSE\Q4MHZ.ASM 145 : Symbol not previously defined (temp1)
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 145 : Executable code and data must be defined in an appropriate section
+Error[150]   C:\COMPTPULSE\Q4MHZ.ASM 146 : Labels must be defined in a code or data section when making an object file
+Error[113]   C:\COMPTPULSE\Q4MHZ.ASM 147 : Symbol not previously defined (temp1)
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 147 : Executable code and data must be defined in an appropriate section
+Error[151]   C:\COMPTPULSE\Q4MHZ.ASM 148 : Operand contains unresolvable labels or is too complex
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 148 : Executable code and data must be defined in an appropriate section
+Error[152]   C:\COMPTPULSE\Q4MHZ.ASM 149 : Executable code and data must be defined in an appropriate section
+Error[129]   C:\COMPTPULSE\Q4MHZ.ASM 151 : Expected (END)

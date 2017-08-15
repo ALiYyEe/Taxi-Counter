@@ -1,0 +1,2017 @@
+MPASM  5.16                          MAIN.ASM   1-11-2016  10:49:42         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001 
+                      00002 
+                      00003         LIST      p=16F876A            ; Définition de processeur
+                      00004         #include <p16F876A.inc>        ; fichier include
+                      00001         LIST
+                      00002 ; P16F876A.INC  Standard Header File, Version 1.00    Microchip Technology, Inc.
+                      00384         LIST
+                      00005     
+2007   3F32           00006         __CONFIG   _CP_OFF & _DEBUG_OFF  & _CPD_OFF & _LVP_OFF & _BODEN_OFF & _PWRTE_ON & _WDT_OFF & _HS
+                            _OSC 
+                      00007 
+                      00008 
+                      00009 ;*****************************************************************************
+                      00010 ;                               ASSIGNATIONS SYSTEME                         *
+                      00011 ;*****************************************************************************
+                      00012 
+                      00013 ; REGISTRE OPTION_REG (configuration)
+                      00014 ; -----------------------------------
+  00000007            00015 OPTIONVAL       EQU     B'00000111'
+                      00016                         ; RBPU     b7 : 1= Résistance rappel +5V hors service
+                      00017                         ; INTEDG   b6 : 1= Interrupt sur flanc montant de RB0
+                      00018                         ;               0= Interrupt sur flanc descend. de RB0
+                      00019                         ; TOCS      b5 : 1= source clock = transition sur RA4
+                      00020                         ;                0= horloge interne
+                      00021                         ; TOSE      b4 : 1= Sélection flanc montant RA4(si B5=1)
+                      00022                         ;                0= Sélection flanc descendant RA4
+                      00023                         ; PSA       b3 : 1= Assignation prédiviseur sur Watchdog
+                      00024                         ;                0= Assignation prédiviseur sur Tmr0
+                      00025                         ; PS2/PS0   b2/b0 valeur du prédiviseur
+                      00026                         ;           000 =  1/1 (watchdog) ou 1/2 (tmr0)
+                      00027                         ;           001 =  1/2               1/4
+                      00028                         ;           010 =  1/4               1/8
+                      00029                         ;           011 =  1/8               1/16
+                      00030                         ;           100 =  1/16              1/32
+                      00031                         ;           101 =  1/32              1/64
+                      00032                         ;           110 =  1/64              1/128
+                      00033                         ;           111 =  1/128             1/256
+                      00034 
+                      00035 
+                      00036 ; REGISTRE INTCON (contrôle interruptions standard)
+                      00037 ; -------------------------------------------------
+  00000060            00038 INTCONVAL       EQU     B'01100000'
+                      00039                         ; GIE       b7 : masque autorisation générale interrupt
+                      00040                         ;                ne pas mettre ce bit à 1 ici
+                      00041                         ;                sera mis en temps utile
+                      00042                         ; PEIE      b6 : masque autorisation générale périphériques
+                      00043                         ; T0IE      b5 : masque interruption tmr0
+                      00044                         ; INTE      b4 : masque interuption RB0/Int
+                      00045                         ; RBIE      b3 : masque interruption RB4/RB7
+                      00046                         ; T0IF      b2 : flag tmr0
+                      00047                         ; INTF      b1 : flag RB0/Int
+                      00048                         ; RBIF      b0 : flag interruption RB4/RB7
+                      00049 
+MPASM  5.16                          MAIN.ASM   1-11-2016  10:49:42         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00050 ; REGISTRE PIE1 (contrôle interruptions périphériques)
+                      00051 ; ----------------------------------------------------
+  00000000            00052 PIE1VAL         EQU     B'00000000'
+                      00053                         ; PSPIE     b7 : Toujours 0 sur PIC 16F786
+                      00054                         ; ADIE      b6 : masque interrupt convertisseur A/D
+                      00055                         ; RCIE      b5 : masque interrupt réception USART
+                      00056                         ; TXIE      b4 : masque interrupt transmission USART
+                      00057                         ; SSPIE     b3 : masque interrupt port série synchrone
+                      00058                         ; CCP1IE    b2 : masque interrupt CCP1
+                      00059                         ; TMR2IE    b1 : masque interrupt TMR2 = PR2
+                      00060                         ; TMR1IE    b0 : masque interrupt débordement tmr1
+                      00061 
+                      00062 ; REGISTRE PIE2 (contrôle interruptions particulières)
+                      00063 ; ----------------------------------------------------
+  00000000            00064 PIE2VAL         EQU     B'00000000'
+                      00065                         ; UNUSED    b7 : inutilisé, laisser à 0
+                      00066                         ; RESERVED  b6 : réservé, laisser à 0
+                      00067                         ; UNUSED    b5 : inutilisé, laisser à 0
+                      00068                         ; EEIE      b4 : masque interrupt écriture EEPROM
+                      00069                         ; BCLIE     b3 : masque interrupt collision bus
+                      00070                         ; UNUSED    b2 : inutilisé, laisser à 0
+                      00071                         ; UNUSED    b1 : inutilisé, laisser à 0
+                      00072                         ; CCP2IE    b0 : masque interrupt CCP2
+                      00073 
+                      00074 ; REGISTRE ADCON1 (ANALOGIQUE/DIGITAL)
+                      00075 ; ------------------------------------
+  00000006            00076 ADCON1VAL       EQU     B'00000110' ; PORTA en mode digital
+                      00077 
+                      00078 ; DIRECTION DES PORTS I/O
+                      00079 ; -----------------------
+                      00080 
+                      00081 ;DIRPORTA       EQU     B'00111111'     ; Direction PORTA (1=entrée)
+  00000000            00082 DIRPORTB        EQU     B'00000000'     ; Direction PORTB
+  00000000            00083 DIRPORTC        EQU     B'00000000'     ; Direction PORTC
+                      00084 
+                      00085 
+                      00086 ;*****************************************************************************
+                      00087 ;                           ASSIGNATIONS PROGRAMME                           *
+                      00088 ;*****************************************************************************
+                      00089 
+                      00090 ; exemple
+                      00091 ;   segment        HGFEDCBA
+  000000C0            00092 val0    EQU       B'11000000'
+  000000F9            00093 val1    EQU   B'11111001'
+  000000A4            00094 val2    EQU   B'10100100'
+  000000B0            00095 val3    EQU   B'10110000'
+  00000099            00096 val4    EQU   B'10011001'
+  00000092            00097 val5    EQU   B'10010010'
+  00000082            00098 val6    EQU   B'10000010'
+  000000F8            00099 val7    EQU   B'11111000'
+  00000080            00100 val8    EQU   B'10000000'
+  00000090            00101 val9    EQU   B'10010000'
+  000000FF            00102 valv    EQU   B'11111111'
+MPASM  5.16                          MAIN.ASM   1-11-2016  10:49:42         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00103 ; -------
+                      00104 
+                      00105 
+                      00106 
+                      00107 
+                      00108 ;*****************************************************************************
+                      00109 ;                                  DEFINE                                    *
+                      00110 ;*****************************************************************************
+                      00111 
+                      00112 ; exemple
+                      00113 ; -------
+                      00114 #DEFINE    onoff    PORTA,0
+                      00115 #DEFINE    tarif    PORTA,1
+                      00116 #DEFINE    clien    PORTA,2
+                      00117 #DEFINE    efface   PORTA,3
+                      00118 #DEFINE    senser   PORTA,4
+                      00119 
+                      00120 ;*****************************************************************************
+                      00121 ;                             MACRO                                          *
+                      00122 ;*****************************************************************************
+                      00123 
+                      00124                         ; Changement de banques
+                      00125                         ; ----------------------
+                      00126 
+                      00127 BANK0   macro                           ; passer en banque0
+                      00128                 bcf     STATUS,RP0
+                      00129                 bcf     STATUS,RP1
+                      00130         endm
+                      00131 
+                      00132 BANK1   macro                           ; passer en banque1
+                      00133                 bsf     STATUS,RP0
+                      00134                 bcf     STATUS,RP1
+                      00135         endm
+                      00136 
+                      00137 BANK2   macro                           ; passer en banque2
+                      00138                 bcf     STATUS,RP0
+                      00139                 bsf     STATUS,RP1
+                      00140         endm
+                      00141 
+                      00142 BANK3   macro                           ; passer en banque3
+                      00143                 bsf     STATUS,RP0
+                      00144                 bsf     STATUS,RP1
+                      00145         endm
+                      00146 
+                      00147 
+                      00148 
+                      00149                         ; opérations en mémoire eeprom
+                      00150                         ; -----------------------------
+                      00151 
+                      00152 REEPROM macro                           ; lire eeprom(adresse & résultat en w)
+                      00153                 clrwdt                  ; reset watchdog
+                      00154                 bcf     STATUS,RP0      ; passer en banque2
+                      00155                 bsf     STATUS,RP1
+MPASM  5.16                          MAIN.ASM   1-11-2016  10:49:42         PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00156                 movwf   EEADR           ; pointer sur adresse eeprom
+                      00157                 bsf     STATUS,RP0      ; passer en banque3
+                      00158                 bcf     EECON1,EEPGD    ; pointer sur eeprom
+                      00159                 bsf     EECON1,RD       ; ordre de lecture
+                      00160                 bcf     STATUS,RP0      ; passer en banque2
+                      00161                 movf    EEDATA,w        ; charger valeur lue
+                      00162                 bcf     STATUS,RP1      ; passer en banque0
+                      00163         endm
+                      00164 
+                      00165 
+                      00166 WEEPROM macro   addwrite        ; la donnée se trouve dans W
+                      00167         LOCAL   loop
+                      00168         bcf     STATUS,RP0      ; passer en banque2
+                      00169         bsf     STATUS,RP1
+                      00170         movwf   EEDATA          ; placer data dans registre
+                      00171         movlw   addwrite        ; charger adresse d'écriture
+                      00172         movwf   EEADR           ; placer dans registre
+                      00173         bsf     STATUS,RP0      ; passer en banque3
+                      00174         bcf     EECON1 , EEPGD  ; pointer sur mémoire data
+                      00175         bsf     EECON1 , WREN   ; autoriser accès écriture
+                      00176         bcf     INTCON , GIE    ; interdire interruptions
+                      00177         movlw   0x55            ; charger 0x55
+                      00178         movwf   EECON2          ; envoyer commande
+                      00179         movlw   0xAA            ; charger 0xAA
+                      00180         movwf   EECON2          ; envoyer commande
+                      00181         bsf     EECON1 , WR     ; lancer cycle d'écriture
+                      00182         bsf     INTCON , GIE    ; réautoriser interruptions
+                      00183 loop
+                      00184         clrwdt                          ; effacer watchdog
+                      00185         btfsc   EECON1 , WR     ; tester si écriture terminée
+                      00186         goto    loop            ; non, attendre
+                      00187         bcf     EECON1 , WREN   ; verrouiller prochaine écriture
+                      00188         bcf     STATUS , RP0    ; passer en banque0
+                      00189         bcf     STATUS , RP1
+                      00190         endm
+                      00191 
+                      00192 
+                      00193 
+                      00194 
+                      00195 ;*****************************************************************************
+                      00196 ;                        VARIABLES BANQUE 0                                  *
+                      00197 ;*****************************************************************************
+                      00198 
+                      00199 ; Zone de 80 bytes
+                      00200 ; ----------------
+                      00201 
+                      00202         CBLOCK  0x30            ; Début de la zone (0x20 à 0x6F)
+  00000030            00203     temp3 :1
+  00000031            00204     temp2 :1
+  00000032            00205     temp1 :1
+  00000033            00206     disptable:1
+  00000034            00207     ct1    :5
+  00000039            00208     ct2    :5
+MPASM  5.16                          MAIN.ASM   1-11-2016  10:49:42         PAGE  5
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+  0000003E            00209     ct3    :5
+  00000043            00210     sw
+  00000044            00211     compt
+  00000045            00212     compt1
+  00000046            00213     compt2
+  00000047            00214     compt3
+  00000048            00215     tarif_f
+  00000049            00216     senser_c
+                      00217     
+                      00218 
+                      00219 
+                      00220         ENDC                    ; Fin de la zone                        
+                      00221 
+  0000006E            00222 var1    EQU H'006E'             ; adresse imposée
+                      00223 
+                      00224 ;*****************************************************************************
+                      00225 ;                      VARIABLES ZONE COMMUNE                                *
+                      00226 ;*****************************************************************************
+                      00227 
+                      00228 ; Zone de 16 bytes
+                      00229 ; ----------------
+                      00230 
+                      00231         CBLOCK 0x70             ; Début de la zone (0x70 à 0x7F)
+  00000070            00232         w_temp : 1              ; Sauvegarde registre W
+  00000071            00233         status_temp : 1         ; sauvegarde registre STATUS
+  00000072            00234         FSR_temp : 1            ; sauvegarde FSR (si indirect en interrupt)
+  00000073            00235         PCLATH_temp : 1         ; sauvegarde PCLATH (si prog>2K)
+                      00236 
+                      00237         ENDC
+                      00238 
+                      00239 ;*****************************************************************************
+                      00240 ;                        VARIABLES BANQUE 1                                  *
+                      00241 ;*****************************************************************************
+                      00242 
+                      00243 ; Zone de 80 bytes
+                      00244 ; ----------------
+                      00245 
+                      00246         CBLOCK  0xA0            ; Début de la zone (0xA0 à 0xEF)
+                      00247 
+                      00248         ENDC                    ; Fin de la zone                        
+                      00249 
+                      00250 ;*****************************************************************************
+                      00251 ;                        VARIABLES BANQUE 2                                  *
+                      00252 ;*****************************************************************************
+                      00253 
+                      00254 ; Zone de 96 bytes
+                      00255 ; ----------------
+                      00256 
+                      00257         CBLOCK  0x110           ; Début de la zone (0x110 à 0x16F)
+                      00258 
+                      00259         ENDC                    ; Fin de la zone                        
+                      00260 
+                      00261 ;*****************************************************************************
+MPASM  5.16                          MAIN.ASM   1-11-2016  10:49:42         PAGE  6
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00262 ;                        VARIABLES BANQUE 3                                  *
+                      00263 ;*****************************************************************************
+                      00264 
+                      00265 ; Zone de 96 bytes
+                      00266 ; ----------------
+                      00267 
+                      00268         CBLOCK  0x190           ; Début de la zone (0x190 à 0x1EF)
+                      00269 
+                      00270         ENDC                    ; Fin de la zone                        
+                      00271 
+                      00272 ;*****************************************************************************
+                      00273 ;                      DEMARRAGE SUR RESET                                   *
+                      00274 ;*****************************************************************************
+                      00275 
+0000                  00276         org 0x000               ; Adresse de départ après reset
+0000   28EC           00277         goto    init            ; Initialiser
+                      00278 
+                      00279 ; ////////////////////////////////////////////////////////////////////////////
+                      00280 
+                      00281 ;                         I N T E R R U P T I O N S
+                      00282 
+                      00283 ; ////////////////////////////////////////////////////////////////////////////
+                      00284 
+                      00285 ;*****************************************************************************
+                      00286 ;                     ROUTINE INTERRUPTION                                   *
+                      00287 ;*****************************************************************************
+                      00288 ;-----------------------------------------------------------------------------
+                      00289 ; Si on n'utilise pas l'adressage indirect dans les interrupts, on se passera
+                      00290 ; de sauvegarder FSR
+                      00291 ; Si le programme ne fait pas plus de 2K, on se passera de la gestion de 
+                      00292 ; PCLATH
+                      00293 ;-----------------------------------------------------------------------------
+                      00294                         ;sauvegarder registres  
+                      00295                         ;---------------------
+0004                  00296         org 0x004               ; adresse d'interruption
+0004   00F0           00297         movwf   w_temp          ; sauver registre W
+0005   0E03           00298         swapf   STATUS,w        ; swap status avec résultat dans w
+0006   00F1           00299         movwf   status_temp     ; sauver status swappé
+0007   0804           00300         movf    FSR , w         ; charger FSR
+0008   00F2           00301         movwf   FSR_temp        ; sauvegarder FSR
+0009   080A           00302         movf    PCLATH , w      ; charger PCLATH
+000A   00F3           00303         movwf   PCLATH_temp     ; le sauver
+000B   018A           00304         clrf    PCLATH          ; on est en page 0
+                      00305         BANK0                   ; passer en banque0
+000C   1283               M                 bcf     STATUS,RP0
+000D   1303               M                 bcf     STATUS,RP1
+                      00306 
+                      00307                         ; switch vers différentes interrupts
+                      00308                         ; inverser ordre pour modifier priorités
+                      00309                         ; mais attention alors au test PEIE
+                      00310                         ; effacer les inutiles
+                      00311                         ;----------------------------------------
+                      00312         
+MPASM  5.16                          MAIN.ASM   1-11-2016  10:49:42         PAGE  7
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00313                         ; Interruption TMR0
+                      00314                         ; -----------------
+                      00315 
+000E   1A8B           00316         btfsc   INTCON,T0IE     ; tester si interrupt timer autorisée
+000F   1D0B           00317         btfss   INTCON,T0IF     ; oui, tester si interrupt timer en cours
+0010   2814           00318         goto    intsw1          ; non test suivant
+0011   207D           00319         call    inttmr0         ; oui, traiter interrupt tmr0
+0012   110B           00320         bcf         INTCON,T0IF ; effacer flag interrupt tmr0
+0013   2874           00321         goto    restorereg      ; et fin d'interruption
+                      00322                                 ; SUPPRIMER CETTE LIGNE POUR
+                      00323                                 ; TRAITER PLUSIEURS INTERRUPT
+                      00324                                 ; EN 1 SEULE FOIS
+                      00325 
+                      00326                         ; Interruption RB0/INT
+                      00327                         ; --------------------
+0014                  00328 intsw1
+0014   1A0B           00329         btfsc   INTCON,INTE     ; tester si interrupt RB0 autorisée
+0015   1C8B           00330         btfss   INTCON,INTF     ; oui, tester si interrupt RB0 en cours
+0016   281A           00331         goto    intsw2          ; non sauter au test suivant
+0017   20DF           00332         call    intrb0          ; oui, traiter interrupt RB0
+0018   108B           00333         bcf     INTCON,INTF     ; effacer flag interupt RB0
+0019   2874           00334         goto    restorereg      ; et fin d'interruption
+                      00335                                 ; SUPPRIMER CETTE LIGNE POUR
+                      00336                                 ; TRAITER PLUSIEURS INTERRUPT
+                      00337                                 ; EN 1 SEULE FOIS
+                      00338 
+                      00339                         ; interruption RB4/RB7
+                      00340                         ; --------------------
+001A                  00341 intsw2
+001A   198B           00342         btfsc   INTCON,RBIE     ; tester si interrupt RB4/7 autorisée
+001B   1C0B           00343         btfss   INTCON,RBIF     ; oui, tester si interrupt RB4/7 en cours
+001C   2820           00344         goto    intsw3          ; non sauter
+001D   20E0           00345         call    intrb4          ; oui, traiter interrupt RB4/7
+001E   100B           00346         bcf     INTCON,RBIF     ; effacer flag interupt RB4/7
+001F   2874           00347         goto    restorereg      ; et fin d'interrupt
+                      00348 
+                      00349                         ; détection interruptions périphériques
+                      00350                         ; le test peut être supprimé si une seule
+                      00351                         ; interrupt est traitée à la fois
+                      00352                         ; --------------------------------------
+0020                  00353 intsw3
+0020   1F0B           00354         btfss   INTCON,PEIE     ; tester interruption périphérique autorisée
+0021   2874           00355         goto    restorereg      ; non, fin d'interruption
+                      00356 
+                      00357                         ; Interruption convertisseur A/D
+                      00358                         ; ------------------------------
+                      00359 
+0022   1683           00360         bsf     STATUS,RP0      ; sélectionner banque1
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0023   1F0C           00361         btfss   PIE1,ADIE       ; tester si interrupt autorisée
+0024   282B           00362         goto    intsw4          ; non sauter
+0025   1283           00363         bcf     STATUS,RP0      ; oui, sélectionner banque0
+0026   1F0C           00364         btfss   PIR1,ADIF       ; tester si interrupt en cours
+MPASM  5.16                          MAIN.ASM   1-11-2016  10:49:42         PAGE  8
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0027   282B           00365         goto    intsw4          ; non sauter
+0028   20E2           00366         call    intad           ; oui, traiter interrupt
+0029   130C           00367         bcf     PIR1,ADIF       ; effacer flag interupt 
+002A   2874           00368         goto    restorereg      ; et fin d'interrupt
+                      00369 
+                      00370                         ; Interruption réception USART
+                      00371                         ; ----------------------------
+002B                  00372 intsw4
+002B   1683           00373         bsf     STATUS,RP0      ; sélectionner banque1
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+002C   1E8C           00374         btfss   PIE1,RCIE       ; tester si interrupt autorisée
+002D   2833           00375         goto    intsw5          ; non sauter
+002E   1283           00376         bcf     STATUS,RP0      ; oui, sélectionner banque0
+002F   1E8C           00377         btfss   PIR1,RCIF       ; oui, tester si interrupt en cours
+0030   2833           00378         goto    intsw5          ; non sauter
+0031   20E3           00379         call    intrc           ; oui, traiter interrupt
+                      00380                                 ; LE FLAG NE DOIT PAS ETRE REMIS A 0
+                      00381                                 ; C'EST LA LECTURE DE RCREG QUI LE PROVOQUE
+0032   2874           00382         goto    restorereg      ; et fin d'interrupt
+                      00383 
+                      00384                         ; Interruption transmission USART
+                      00385                         ; -------------------------------
+0033                  00386 intsw5
+0033   1683           00387         bsf     STATUS,RP0      ; sélectionner banque1
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0034   1E0C           00388         btfss   PIE1,TXIE       ; tester si interrupt autorisée
+0035   283B           00389         goto    intsw6          ; non sauter
+0036   1283           00390         bcf     STATUS,RP0      ; oui, sélectionner banque0
+0037   1E0C           00391         btfss   PIR1,TXIF       ; oui, tester si interrupt en cours
+0038   283B           00392         goto    intsw6          ; non sauter
+0039   20E4           00393         call    inttx           ; oui, traiter interrupt
+                      00394                                 ; LE FLAG NE DOIT PAS ETRE REMIS A 0
+                      00395                                 ; C'EST L'ECRITURE DE TXREG QUI LE PROVOQUE
+003A   2874           00396         goto    restorereg      ; et fin d'interrupt
+                      00397 
+                      00398                         ; Interruption SSP
+                      00399                         ; ----------------
+003B                  00400 intsw6
+003B   1683           00401         bsf     STATUS,RP0      ; sélectionner banque1
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+003C   1D8C           00402         btfss   PIE1,SSPIE      ; tester si interrupt autorisée
+003D   2844           00403         goto    intsw7          ; non sauter
+003E   1283           00404         bcf     STATUS,RP0      ; oui, sélectionner banque0
+003F   1D8C           00405         btfss   PIR1,SSPIF      ; oui, tester si interrupt en cours
+0040   2844           00406         goto    intsw7          ; non sauter
+0041   20E5           00407         call    intssp          ; oui, traiter interrupt
+0042   118C           00408         bcf     PIR1,SSPIF      ; effacer flag interupt 
+0043   2874           00409         goto    restorereg      ; et fin d'interrupt
+                      00410 
+                      00411                         ; Interruption CCP1
+                      00412                         ; -----------------
+0044                  00413 intsw7
+0044   1683           00414         bsf     STATUS,RP0      ; sélectionner banque1
+MPASM  5.16                          MAIN.ASM   1-11-2016  10:49:42         PAGE  9
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0045   1D0C           00415         btfss   PIE1,CCP1IE     ; tester si interrupt autorisée
+0046   284D           00416         goto    intsw8          ; non sauter
+0047   1283           00417         bcf     STATUS,RP0      ; oui, sélectionner banque0
+0048   1D0C           00418         btfss   PIR1,CCP1IF     ; oui, tester si interrupt en cours
+0049   284D           00419         goto    intsw8          ; non sauter
+004A   20E6           00420         call    intccp1         ; oui, traiter interrupt
+004B   110C           00421         bcf     PIR1,CCP1IF     ; effacer flag interupt 
+004C   2874           00422         goto    restorereg      ; et fin d'interrupt
+                      00423 
+                      00424 
+                      00425                         ; Interruption TMR2
+                      00426                         ; -----------------
+004D                  00427 intsw8
+004D   1683           00428         bsf     STATUS,RP0      ; sélectionner banque1
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+004E   1C8C           00429         btfss   PIE1,TMR2IE     ; tester si interrupt autorisée
+004F   2856           00430         goto    intsw9          ; non sauter
+0050   1283           00431         bcf     STATUS,RP0      ; oui, sélectionner banque0
+0051   1C8C           00432         btfss   PIR1,TMR2IF     ; oui, tester si interrupt en cours
+0052   2856           00433         goto    intsw9          ; non sauter
+0053   20E7           00434         call    inttmr2         ; oui, traiter interrupt
+0054   108C           00435         bcf     PIR1,TMR2IF     ; effacer flag interupt 
+0055   2874           00436         goto    restorereg      ; et fin d'interrupt
+                      00437 
+                      00438                         ; Interruption TMR1
+                      00439                         ; -----------------
+0056                  00440 intsw9
+0056   1683           00441         bsf     STATUS,RP0      ; sélectionner banque1
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0057   1C0C           00442         btfss   PIE1,TMR1IE     ; tester si interrupt autorisée
+0058   285F           00443         goto    intswA          ; non sauter
+0059   1283           00444         bcf     STATUS,RP0      ; oui, sélectionner banque0
+005A   1C0C           00445         btfss   PIR1,TMR1IF     ; oui, tester si interrupt en cours
+005B   285F           00446         goto    intswA          ; non sauter
+005C   20E8           00447         call    inttmr1         ; oui, traiter interrupt
+005D   100C           00448         bcf     PIR1,TMR1IF     ; effacer flag interupt 
+005E   2874           00449         goto    restorereg      ; et fin d'interrupt
+                      00450 
+                      00451                         ; Interruption EEPROM
+                      00452                         ; -------------------
+005F                  00453 intswA
+005F   1683           00454         bsf     STATUS,RP0      ; sélectionner banque1
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0060   1E0D           00455         btfss   PIE2,EEIE       ; tester si interrupt autorisée
+0061   2868           00456         goto    intswB          ; non sauter
+0062   1283           00457         bcf     STATUS,RP0      ; oui, sélectionner banque0
+0063   1E0D           00458         btfss   PIR2,EEIF       ; oui, tester si interrupt en cours
+0064   2868           00459         goto    intswB          ; non sauter
+0065   20E9           00460         call    inteprom        ; oui, traiter interrupt
+0066   120D           00461         bcf     PIR2,EEIF       ; effacer flag interupt 
+0067   2874           00462         goto    restorereg      ; et fin d'interrupt
+                      00463 
+MPASM  5.16                          MAIN.ASM   1-11-2016  10:49:42         PAGE 10
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00464                         ; Interruption COLLISION
+                      00465                         ; ----------------------
+0068                  00466 intswB
+0068   1683           00467         bsf     STATUS,RP0      ; sélectionner banque1
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0069   1D8D           00468         btfss   PIE2,BCLIE      ; tester si interrupt autorisée
+006A   2871           00469         goto    intswC          ; non sauter
+006B   1283           00470         bcf     STATUS,RP0      ; oui, sélectionner banque0
+006C   1D8D           00471         btfss   PIR2,BCLIF      ; oui, tester si interrupt en cours
+006D   2871           00472         goto    intswC          ; non sauter
+006E   20EA           00473         call    intbc           ; oui, traiter interrupt
+006F   118D           00474         bcf     PIR2,BCLIF      ; effacer flag interupt 
+0070   2874           00475         goto    restorereg      ; et fin d'interrupt
+                      00476 
+                      00477                         ; interruption CCP2
+                      00478                         ; -----------------
+0071                  00479 intswC
+0071   1283           00480         bcf     STATUS,RP0      ; oui, sélectionner banque0
+0072   20EB           00481         call    intccp2         ; traiter interrupt
+0073   100D           00482         bcf     PIR2,CCP2IF     ; effacer flag interupt 
+                      00483 
+                      00484                         ;restaurer registres
+                      00485                         ;-------------------
+0074                  00486 restorereg
+0074   0873           00487         movf    PCLATH_temp , w ; recharger ancien PCLATH
+0075   008A           00488         movwf   PCLATH          ; le restaurer
+0076   0872           00489         movf    FSR_temp , w    ; charger FSR sauvé
+0077   0084           00490         movwf   FSR             ; restaurer FSR
+0078   0E71           00491         swapf   status_temp,w   ; swap ancien status, résultat dans w
+0079   0083           00492         movwf   STATUS          ; restaurer status
+007A   0EF0           00493         swapf   w_temp,f        ; Inversion L et H de l'ancien W
+                      00494                                 ; sans modifier Z
+007B   0E70           00495         swapf   w_temp,w        ; Réinversion de L et H dans W
+                      00496                                 ; W restauré sans modifier status
+007C   0009           00497         retfie                  ; return from interrupt
+                      00498 
+                      00499 ;*****************************************************************************
+                      00500 ;                        INTERRUPTION TIMER 0                                *
+                      00501 ;*****************************************************************************
+007D                  00502 inttmr0 
+Message[305]: Using default destination of 1 (file).
+007D   0BC7           00503        decfsz compt3
+007E   28DE           00504        goto   e20
+007F   3050           00505        movlw  0x50
+0080   00C7           00506        movwf  compt3
+0081   3001           00507        movlw  0x01
+0082   00C6           00508        movwf  compt2
+0083   1C48           00509        btfss  tarif_f,0
+0084   2886           00510        goto   e41
+0085   28B0           00511        goto   e40
+Warning[207]: Found label after column 1. (e41)
+0086   3034           00512  e41   movlw  ct1
+0087   3E03           00513        addlw  0x03
+MPASM  5.16                          MAIN.ASM   1-11-2016  10:49:42         PAGE 11
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0088   0084           00514        movwf  FSR
+0089   0800           00515        movfw  INDF
+008A   1D03           00516        btfss  STATUS,Z
+008B   28B0           00517        goto   e40
+008C   1048           00518        bcf    tarif_f,0
+008D   3034           00519        movlw  ct1
+008E   00C3           00520        movwf  sw
+Warning[207]: Found label after column 1. (e10)
+008F   0843           00521  e10   movfw  sw
+0090   3E03           00522        addlw  0x03
+0091   0084           00523        movwf  FSR
+0092   3002           00524        movlw  0x02
+Message[305]: Using default destination of 1 (file).
+0093   0384           00525        decf   FSR 
+Message[305]: Using default destination of 1 (file).
+0094   0780           00526        addwf  INDF
+0095   0800           00527        movfw  INDF
+0096   3C0A           00528        sublw  0x0A 
+0097   1D03           00529        btfss  STATUS,Z
+0098   28AA           00530        goto   e6
+0099   0180           00531        clrf   INDF
+Message[305]: Using default destination of 1 (file).
+009A   0384           00532        decf   FSR
+009B   3001           00533        movlw  0x01
+Message[305]: Using default destination of 1 (file).
+009C   0780           00534        addwf  INDF
+009D   0800           00535        movfw  INDF
+009E   3C0A           00536        sublw  0x0A
+009F   1D03           00537        btfss  STATUS,Z
+00A0   28AA           00538        goto   e6
+00A1   0180           00539        clrf   INDF
+Message[305]: Using default destination of 1 (file).
+00A2   0384           00540        decf   FSR
+00A3   3001           00541        movlw  0x01
+Message[305]: Using default destination of 1 (file).
+00A4   0780           00542        addwf  INDF
+                      00543        
+00A5   0800           00544        movfw  INDF
+00A6   3C0A           00545        sublw  0x0A
+00A7   1D03           00546        btfss  STATUS,Z
+00A8   28AA           00547        goto   e6
+00A9   219E           00548        call   reset
+                      00549               
+00AA   3005           00550 e6     movlw  0x05
+00AB   07C3           00551        addwf  sw,f
+Message[305]: Using default destination of 1 (file).
+00AC   0DC6           00552        rlf    compt2
+00AD   1DC6           00553        btfss  compt2,3
+00AE   288F           00554        goto   e10
+00AF   28DE           00555        goto   e20
+                      00556 
+Warning[207]: Found label after column 1. (e40)
+00B0   1448           00557  e40   bsf    tarif_f,0
+MPASM  5.16                          MAIN.ASM   1-11-2016  10:49:42         PAGE 12
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00B1   3034           00558        movlw  ct1
+00B2   00C3           00559        movwf  sw
+Warning[207]: Found label after column 1. (e61)
+00B3   0843           00560  e61   movfw  sw
+00B4   3E03           00561        addlw  0x03
+00B5   0084           00562        movwf  FSR
+00B6   3005           00563        movlw  0x05
+Message[305]: Using default destination of 1 (file).
+00B7   0780           00564        addwf  INDF
+00B8   0800           00565        movfw  INDF
+00B9   3C0A           00566        sublw  0x0A
+00BA   1D03           00567        btfss  STATUS,Z
+00BB   28DB           00568        goto   e30
+00BC   0180           00569        clrf   INDF
+Message[305]: Using default destination of 1 (file).
+00BD   0384           00570        decf   FSR
+00BE   3003           00571        movlw  0x03 
+Warning[207]: Found label after column 1. (e31)
+Message[305]: Using default destination of 1 (file).
+00BF   0780           00572   e31  addwf  INDF
+00C0   0800           00573        movfw  INDF
+00C1   3C0A           00574        sublw  0x0A 
+00C2   1D03           00575        btfss  STATUS,Z
+00C3   28D5           00576        goto   e50
+00C4   0180           00577        clrf   INDF
+Message[305]: Using default destination of 1 (file).
+00C5   0384           00578        decf   FSR
+00C6   3001           00579        movlw  0x01
+Message[305]: Using default destination of 1 (file).
+00C7   0780           00580        addwf  INDF
+00C8   0800           00581        movfw  INDF
+00C9   3C0A           00582        sublw  0x0A
+00CA   1D03           00583        btfss  STATUS,Z
+00CB   28D5           00584        goto   e50
+00CC   0180           00585        clrf   INDF
+Message[305]: Using default destination of 1 (file).
+00CD   0384           00586        decf   FSR
+00CE   3001           00587        movlw  0x01
+Message[305]: Using default destination of 1 (file).
+00CF   0780           00588        addwf  INDF
+                      00589 
+00D0   0800           00590        movfw  INDF
+00D1   3C0A           00591        sublw  0x0A
+00D2   1D03           00592        btfss  STATUS,Z
+00D3   28D5           00593        goto   e50
+00D4   219E           00594        call   reset
+                      00595 
+00D5   3005           00596 e50    movlw  0x05
+00D6   07C3           00597        addwf  sw,f
+Message[305]: Using default destination of 1 (file).
+00D7   0DC6           00598        rlf    compt2
+00D8   1DC6           00599        btfss  compt2,3
+00D9   28B3           00600        goto   e61
+MPASM  5.16                          MAIN.ASM   1-11-2016  10:49:42         PAGE 13
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00DA   28DE           00601        goto   e20
+Warning[207]: Found label after column 1. (e30)
+00DB   3002           00602  e30   movlw  0x02
+Message[305]: Using default destination of 1 (file).
+00DC   0384           00603        decf   FSR
+00DD   28BF           00604        goto   e31 
+                      00605        
+                      00606 
+                      00607        
+Warning[207]: Found label after column 1. (e20)
+00DE                  00608  e20   
+00DE   0008           00609        return                   
+                      00610                 ; fin d'interruption timer
+                      00611                                 ; peut être remplacé par 
+                      00612                                 ; retlw pour retour code d'erreur
+                      00613 
+                      00614 ;*****************************************************************************
+                      00615 ;                        INTERRUPTION RB0/INT                                *
+                      00616 ;*****************************************************************************
+00DF                  00617 intrb0
+00DF   0008           00618         return                  ; fin d'interruption RB0/INT
+                      00619                                 ; peut être remplacé par 
+                      00620                                 ; retlw pour retour code d'erreur
+                      00621 
+                      00622 ;*****************************************************************************
+                      00623 ;                         INTERRUPTION RB4/RB7                               *
+                      00624 ;*****************************************************************************
+00E0                  00625 intrb4
+00E0   0806           00626         movf    PORTB,w         ; indispensable pour pouvoir resetter RBIF
+00E1   0008           00627         return                  ; fin d'interruption RB4/RB7
+                      00628                                 ; peut être remplacé par 
+                      00629                                 ; retlw pour retour code d'erreur
+                      00630 
+                      00631 ;*****************************************************************************
+                      00632 ;                     INTERRUPTION CONVERTISSEUR A/D                         *
+                      00633 ;*****************************************************************************
+00E2                  00634 intad
+00E2   0008           00635         return                  ; fin d'interruption
+                      00636                                 ; peut être remplacé par 
+                      00637                                 ; retlw pour retour code d'erreur
+                      00638 
+                      00639 ;*****************************************************************************
+                      00640 ;                     INTERRUPTION RECEPTION USART                           *
+                      00641 ;*****************************************************************************
+00E3                  00642 intrc
+00E3   0008           00643         return                  ; fin d'interruption
+                      00644                                 ; peut être remplacé par 
+                      00645                                 ; retlw pour retour code d'erreur
+                      00646 
+                      00647 ;*****************************************************************************
+                      00648 ;                     INTERRUPTION TRANSMISSION USART                        *
+                      00649 ;*****************************************************************************
+00E4                  00650 inttx
+MPASM  5.16                          MAIN.ASM   1-11-2016  10:49:42         PAGE 14
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00E4   0008           00651         return                  ; fin d'interruption
+                      00652                                 ; peut être remplacé par 
+                      00653                                 ; retlw pour retour code d'erreur
+                      00654 
+                      00655 ;*****************************************************************************
+                      00656 ;                       INTERRUPTION SSP                                     *
+                      00657 ;*****************************************************************************
+00E5                  00658 intssp
+00E5   0008           00659         return                  ; fin d'interruption
+                      00660                                 ; peut être remplacé par 
+                      00661                                 ; retlw pour retour code d'erreur
+                      00662 
+                      00663 ;*****************************************************************************
+                      00664 ;                       INTERRUPTION CCP1                                    *
+                      00665 ;*****************************************************************************
+00E6                  00666 intccp1
+00E6   0008           00667         return                  ; fin d'interruption
+                      00668                                 ; peut être remplacé par 
+                      00669                                 ; retlw pour retour code d'erreur
+                      00670 
+                      00671 ;*****************************************************************************
+                      00672 ;                     INTERRUPTION TIMER 2                                   *
+                      00673 ;*****************************************************************************
+00E7                  00674 inttmr2
+00E7   0008           00675         return                  ; fin d'interruption
+                      00676                                 ; peut être remplacé par 
+                      00677                                 ; retlw pour retour code d'erreur
+                      00678 
+                      00679 ;*****************************************************************************
+                      00680 ;                     INTERRUPTION TIMER 1                                   *
+                      00681 ;*****************************************************************************
+00E8                  00682 inttmr1
+00E8   0008           00683         return                  ; fin d'interruption
+                      00684                                 ; peut être remplacé par 
+                      00685                                 ; retlw pour retour code d'erreur
+                      00686 
+                      00687 ;*****************************************************************************
+                      00688 ;                     INTERRUPTION EEPROM                                    *
+                      00689 ;*****************************************************************************
+00E9                  00690 inteprom
+00E9   0008           00691         return                  ; fin d'interruption
+                      00692                                 ; peut être remplacé par 
+                      00693                                 ; retlw pour retour code d'erreur
+                      00694 
+                      00695 ;*****************************************************************************
+                      00696 ;                     INTERRUPTION COLLISION                                 *
+                      00697 ;*****************************************************************************
+00EA                  00698 intbc
+00EA   0008           00699         return                  ; fin d'interruption
+                      00700                                 ; peut être remplacé par 
+                      00701                                 ; retlw pour retour code d'erreur
+                      00702 
+                      00703 ;*****************************************************************************
+MPASM  5.16                          MAIN.ASM   1-11-2016  10:49:42         PAGE 15
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00704 ;                        INTERRUPTION CCP2                                   *
+                      00705 ;*****************************************************************************
+00EB                  00706 intccp2
+00EB   0008           00707         return                  ; fin d'interruption
+                      00708                                 ; peut être remplacé par 
+                      00709                                 ; retlw pour retour code d'erreur
+                      00710 
+                      00711 ; ////////////////////////////////////////////////////////////////////////////
+                      00712 
+                      00713 ;                           P R O G R A M M E
+                      00714 
+                      00715 ; ////////////////////////////////////////////////////////////////////////////
+                      00716 
+                      00717 ;*****************************************************************************
+                      00718 ;                          INITIALISATIONS                                   *
+                      00719 ;*****************************************************************************
+00EC                  00720 init
+                      00721 
+                      00722                         ; initialisation PORTS (banque 0 et 1)
+                      00723                         ; ------------------------------------
+                      00724         BANK0                   ; sélectionner banque0
+00EC   1283               M                 bcf     STATUS,RP0
+00ED   1303               M                 bcf     STATUS,RP1
+00EE   0185           00725         clrf    PORTA           ; Sorties PORTA à 0
+00EF   0186           00726         clrf    PORTB           ; sorties PORTB à 0
+00F0   0187           00727         clrf    PORTC           ; sorties PORTC à 0
+00F1   1683           00728         bsf         STATUS,RP0  ; passer en banque1
+00F2   3006           00729         movlw   ADCON1VAL       ; PORTA en mode digital/analogique
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00F3   009F           00730         movwf   ADCON1          ; écriture dans contrôle A/D
+00F4   303F           00731         movlw   0x3F            ; Direction PORTA
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00F5   0085           00732         movwf   TRISA           ; écriture dans registre direction
+00F6   3000           00733         movlw   DIRPORTB        ; Direction PORTB
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00F7   0086           00734         movwf   TRISB           ; écriture dans registre direction
+00F8   3000           00735         movlw   DIRPORTC        ; Direction PORTC
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00F9   0087           00736         movwf   TRISC           ; écriture dans registre direction
+                      00737 
+                      00738                         ; Registre d'options (banque 1)
+                      00739                         ; -----------------------------
+00FA   3007           00740         movlw   OPTIONVAL       ; charger masque
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00FB   0081           00741         movwf   OPTION_REG      ; initialiser registre option
+                      00742 
+                      00743                         ; registres interruptions (banque 1)
+                      00744                         ; ----------------------------------
+00FC   3060           00745         movlw   INTCONVAL       ; charger valeur registre interruption
+00FD   008B           00746         movwf   INTCON          ; initialiser interruptions
+00FE   3000           00747         movlw   PIE1VAL         ; Initialiser registre 
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00FF   008C           00748         movwf   PIE1            ; interruptions périphériques 1
+MPASM  5.16                          MAIN.ASM   1-11-2016  10:49:42         PAGE 16
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0100   3000           00749         movlw   PIE2VAL         ; initialiser registre
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0101   008D           00750         movwf   PIE2            ; interruptions périphériques 2
+                      00751 
+                      00752 
+                      00753 
+                      00754                         ; autoriser interruptions (banque 0)
+                      00755                         ; ----------------------------------
+0102   018C           00756         clrf    PIR1            ; effacer flags 1
+0103   018D           00757         clrf    PIR2            ; effacer flags 2
+0104   178B           00758         bsf     INTCON,GIE      ; valider interruptions
+0105   2906           00759         goto    start           ; programme principal
+                      00760 
+                      00761 
+                      00762 ;*****************************************************************************
+                      00763 ;                      PROGRAMME PRINCIPAL                                   *
+                      00764 ;*****************************************************************************
+                      00765 
+0106                  00766 start
+                      00767 
+                      00768    BANK0
+0106   1283               M                 bcf     STATUS,RP0
+0107   1303               M                 bcf     STATUS,RP1
+0108   3005           00769     movlw 0x05
+0109   00C9           00770     movwf senser_c
+010A   3050           00771     movlw 0x50
+010B   00C7           00772     movwf compt3
+010C   30FF           00773     movlw 0xFF
+010D   0086           00774     movwf PORTB
+010E   0087           00775     movwf PORTC
+010F   224C           00776     call  Tempo_350ms
+0110   3001           00777     movlw 0x01
+0111   00C4           00778     movwf compt
+0112   1805           00779     btfsc onoff
+0113   2912           00780     goto  $-1
+0114   0186           00781     clrf  PORTB
+0115   224C           00782     call  Tempo_350ms
+0116   2214           00783     call  jour
+0117   307F           00784     movlw 0x7F
+0118   0086           00785     movwf PORTB
+                      00786     
+0119   3005           00787     movlw 0x05
+011A   00C5           00788     movwf compt1
+                      00789     
+011B   1885           00790 n6  btfsc tarif
+011C   291E           00791     goto  n7
+011D   2922           00792     goto  n8
+                      00793     
+011E   2259           00794 n7  call   Tempo_100ms
+Message[305]: Using default destination of 1 (file).
+011F   0BC5           00795     decfsz compt1
+0120   291B           00796     goto   n6
+0121   2924           00797     goto   n2
+MPASM  5.16                          MAIN.ASM   1-11-2016  10:49:42         PAGE 17
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0122   21E3           00798 n8  call  nuit
+                      00799     
+0123   17E0           00800     bsf   INTCONVAL,GIE
+                      00801     
+0124   3034           00802 n2  movlw ct1
+0125   00B3           00803     movwf disptable
+0126   3001           00804     movlw 0x01
+0127   0087           00805     movwf PORTC 
+0128   1905           00806 n9  btfsc clien
+0129   2939           00807     goto  n5
+012A   30FF           00808     movlw 0xFF
+012B   0086           00809     movwf PORTB
+012C   2259           00810     call  Tempo_100ms
+012D   3001           00811     movlw 0x01
+Message[305]: Using default destination of 1 (file).
+012E   07C4           00812     addwf compt
+012F   1D44           00813     btfss compt,2
+0130   2932           00814     goto  n3
+0131   2935           00815     goto  n4
+0132   3005           00816 n3  movlw 0x05
+0133   07B3           00817     addwf disptable,f
+0134   2939           00818     goto  n5
+0135   3001           00819 n4  movlw 0x01
+0136   00C4           00820     movwf compt
+0137   3034           00821     movlw ct1
+0138   00B3           00822     movwf disptable
+0139   1805           00823 n5  btfsc onoff
+013A   293C           00824     goto  s1
+013B   2906           00825     goto  start
+013C   1985           00826 s1  btfsc efface
+013D   293F           00827     goto  s2
+013E   219E           00828     call  reset
+013F   1A05           00829 s2  btfsc senser
+0140   2945           00830     goto  b1
+0141   3030           00831     movlw 0x30
+0142   00C7           00832     movwf compt3
+0143   2268           00833     call  Tempo_1ms
+0144   2195           00834     call  inc
+                      00835          
+0145   3001           00836 b1  movlw 0x01
+0146   0087           00837     movwf PORTC
+0147   0833           00838     movfw disptable
+0148   0084           00839     movwf FSR
+0149   0800           00840 b2  movfw INDF
+014A   2156           00841     call  convert
+014B   1C87           00842     btfss PORTC,1
+014C   294E           00843     goto  d1
+014D   397F           00844     andlw 0x7F
+014E   0086           00845 d1  movwf PORTB
+014F   2268           00846     call  Tempo_1ms
+Message[305]: Using default destination of 1 (file).
+0150   0A84           00847     incf  FSR
+0151   1003           00848     bcf   STATUS,C
+MPASM  5.16                          MAIN.ASM   1-11-2016  10:49:42         PAGE 18
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0152   0D87           00849     rlf   PORTC,f
+0153   1E87           00850     btfss PORTC,5
+0154   2949           00851     goto  b2
+0155   2928           00852     goto  n9
+                      00853 
+                      00854     
+                      00855     
+                      00856     
+0156                  00857 convert
+0156   00C3           00858          movwf sw
+0157   3C00           00859          sublw 0x00
+0158   1D03           00860          btfss STATUS,Z
+0159   295B           00861          goto  c1
+015A   298B           00862          goto  c2
+015B   0843           00863 c1       movfw sw
+015C   3C01           00864          sublw 0x01
+015D   1D03           00865          btfss STATUS,Z
+015E   2960           00866          goto  c3
+015F   298C           00867          goto  c4
+0160   0843           00868 c3       movfw sw
+0161   3C02           00869          sublw 0x02
+0162   1D03           00870          btfss STATUS,Z
+0163   2965           00871          goto  c5
+0164   298D           00872          goto  c6
+0165   0843           00873 c5       movfw sw
+0166   3C03           00874          sublw 0x03
+0167   1D03           00875          btfss STATUS,Z
+0168   296A           00876          goto  c7
+0169   298E           00877          goto  c8
+016A   0843           00878 c7       movfw sw
+016B   3C04           00879          sublw 0x04
+016C   1D03           00880          btfss STATUS,Z
+016D   296F           00881          goto  c9
+016E   298F           00882          goto  c10
+016F   0843           00883 c9       movfw sw
+0170   3C05           00884          sublw 0x05
+0171   1D03           00885          btfss STATUS,Z
+0172   2974           00886          goto  c11
+0173   2990           00887          goto  c12
+0174   0843           00888 c11      movfw sw
+0175   3C06           00889          sublw 0x06
+0176   1D03           00890          btfss STATUS,Z
+0177   2979           00891          goto  c13
+0178   2991           00892          goto  c14
+0179   0843           00893 c13      movfw sw
+017A   3C07           00894          sublw 0x07
+017B   1D03           00895          btfss STATUS,Z
+017C   297E           00896          goto  c15
+017D   2992           00897          goto  c16
+017E   0843           00898 c15      movfw sw
+017F   3C08           00899          sublw 0x08
+0180   1D03           00900          btfss STATUS,Z
+0181   2983           00901          goto  c17
+MPASM  5.16                          MAIN.ASM   1-11-2016  10:49:42         PAGE 19
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0182   2993           00902          goto  c18
+0183   0843           00903 c17      movfw sw
+0184   3C09           00904          sublw 0x09
+0185   1D03           00905          btfss STATUS,Z
+0186   2988           00906          goto  c19
+0187   2994           00907          goto  c20
+0188   30FF           00908 c19      movlw 0xFF
+0189   0008           00909          return
+018A   2994           00910          goto  c20
+018B   34C0           00911 c2       retlw val0
+018C   34F9           00912 c4       retlw val1
+018D   34A4           00913 c6       retlw val2
+018E   34B0           00914 c8       retlw val3
+018F   3499           00915 c10      retlw val4
+0190   3492           00916 c12      retlw val5
+0191   3482           00917 c14      retlw val6
+0192   34F8           00918 c16      retlw val7
+0193   3480           00919 c18      retlw val8
+0194   3490           00920 c20      retlw val9
+                      00921     
+Message[305]: Using default destination of 1 (file).
+0195   0BC9           00922 inc      decfsz senser_c
+0196   299D           00923          goto  h1
+0197   3005           00924          movlw 0x05
+0198   00C9           00925          movwf  senser_c
+0199   3001           00926          movlw 0x01
+019A   00C7           00927          movwf compt3
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+019B   00FE           00928          movwf 0xFE
+019C   0081           00929          movwf TMR0
+019D   0008           00930 h1       return
+                      00931                        
+019E                  00932 reset
+019E   0844           00933     movfw compt
+019F   3C01           00934     sublw 0x01
+01A0   1D03           00935     btfss STATUS,Z
+01A1   29A3           00936     goto  g1
+01A2   21AE           00937     call  reset1
+01A3   0844           00938 g1  movfw compt
+01A4   3C02           00939     sublw 0x02
+01A5   1D03           00940     btfss STATUS,Z
+01A6   29A8           00941     goto  g2
+01A7   21B7           00942     call  reset2
+01A8   0844           00943 g2  movfw compt
+01A9   3C03           00944     sublw 0x03
+01AA   1D03           00945     btfss STATUS,Z
+01AB   29AD           00946     goto  g3
+01AC   21C0           00947     call  reset3
+01AD   0008           00948 g3  return 
+                      00949 
+01AE                  00950 reset1
+01AE   1C48           00951     btfss tarif_f,0
+01AF   29B4           00952     goto  g11
+MPASM  5.16                          MAIN.ASM   1-11-2016  10:49:42         PAGE 20
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+01B0   29B1           00953     goto  g10
+01B1   3034           00954 g10 movlw ct1
+01B2   21C9           00955     call  resetnuit
+01B3   0008           00956     return
+01B4   3034           00957 g11 movlw ct1
+01B5   21D6           00958     call  resetjour
+01B6   0008           00959     return
+                      00960 
+01B7                  00961 reset2
+01B7   1C48           00962     btfss tarif_f,0
+01B8   29BD           00963     goto  g13
+01B9   29BA           00964     goto  g12
+01BA   3039           00965 g12 movlw ct2
+01BB   21C9           00966     call  resetnuit
+01BC   0008           00967     return
+01BD   3039           00968 g13 movlw ct2
+01BE   21D6           00969     call  resetjour
+01BF   0008           00970     return
+                      00971 
+01C0                  00972 reset3
+01C0   1C48           00973     btfss tarif_f,0
+01C1   29C6           00974     goto  g15
+01C2   29C3           00975     goto  g14
+01C3   303E           00976 g14 movlw ct3
+01C4   21C9           00977     call  resetnuit
+01C5   0008           00978     return
+01C6   303E           00979 g15 movlw ct3
+01C7   21D6           00980     call  resetjour
+01C8   0008           00981     return
+                      00982 
+01C9                  00983 resetnuit   
+01C9   0084           00984     movwf FSR
+01CA   3000           00985     movlw 0x00
+01CB   0080           00986     movwf INDF
+Message[305]: Using default destination of 1 (file).
+01CC   0A84           00987     incf  FSR
+01CD   3001           00988     movlw 0x01
+01CE   0080           00989     movwf INDF
+Message[305]: Using default destination of 1 (file).
+01CF   0A84           00990     incf  FSR
+01D0   3007           00991     movlw 0x07
+01D1   0080           00992     movwf INDF
+Message[305]: Using default destination of 1 (file).
+01D2   0A84           00993     incf  FSR
+01D3   3005           00994     movlw 0x05
+01D4   0080           00995     movwf INDF
+01D5   0008           00996     return
+                      00997 
+01D6                  00998 resetjour
+01D6   0084           00999     movwf FSR
+01D7   3000           01000     movlw 0x00
+01D8   0080           01001     movwf INDF
+Message[305]: Using default destination of 1 (file).
+MPASM  5.16                          MAIN.ASM   1-11-2016  10:49:42         PAGE 21
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+01D9   0A84           01002     incf  FSR
+01DA   3001           01003     movlw 0x01
+01DB   0080           01004     movwf INDF
+Message[305]: Using default destination of 1 (file).
+01DC   0A84           01005     incf  FSR
+01DD   3004           01006     movlw 0x04
+01DE   0080           01007     movwf INDF
+Message[305]: Using default destination of 1 (file).
+01DF   0A84           01008     incf  FSR
+01E0   3000           01009     movlw 0x00
+01E1   0080           01010     movwf INDF
+01E2   0008           01011     return
+                      01012 
+01E3                  01013 nuit 
+01E3   3034           01014     movlw ct1
+01E4   0084           01015     movwf FSR
+01E5   3000           01016     movlw 0x00
+01E6   0080           01017     movwf INDF
+Message[305]: Using default destination of 1 (file).
+01E7   0A84           01018     incf  FSR
+01E8   3001           01019     movlw 0x01
+01E9   0080           01020     movwf INDF
+Message[305]: Using default destination of 1 (file).
+01EA   0A84           01021     incf  FSR
+01EB   3007           01022     movlw 0x07
+01EC   0080           01023     movwf INDF
+Message[305]: Using default destination of 1 (file).
+01ED   0A84           01024     incf  FSR
+01EE   3005           01025     movlw 0x05
+01EF   0080           01026     movwf INDF
+Message[305]: Using default destination of 1 (file).
+01F0   0A84           01027     incf  FSR
+01F1   3001           01028     movlw 0x01
+01F2   0080           01029     movwf INDF
+                      01030 
+01F3   3039           01031     movlw ct2
+01F4   0084           01032     movwf FSR
+01F5   3000           01033     movlw 0x00
+01F6   0080           01034     movwf INDF
+Message[305]: Using default destination of 1 (file).
+01F7   0A84           01035     incf  FSR
+01F8   3001           01036     movlw 0x01
+01F9   0080           01037     movwf INDF
+Message[305]: Using default destination of 1 (file).
+01FA   0A84           01038     incf  FSR
+01FB   3007           01039     movlw 0x07
+01FC   0080           01040     movwf INDF
+Message[305]: Using default destination of 1 (file).
+01FD   0A84           01041     incf  FSR
+01FE   3005           01042     movlw 0x05
+01FF   0080           01043     movwf INDF
+Message[305]: Using default destination of 1 (file).
+0200   0A84           01044     incf  FSR
+MPASM  5.16                          MAIN.ASM   1-11-2016  10:49:42         PAGE 22
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0201   3002           01045     movlw 0x02
+0202   0080           01046     movwf INDF
+                      01047 
+0203   303E           01048     movlw ct3
+0204   0084           01049     movwf FSR
+0205   3000           01050     movlw 0x00
+0206   0080           01051     movwf INDF
+Message[305]: Using default destination of 1 (file).
+0207   0A84           01052     incf  FSR
+0208   3001           01053     movlw 0x01
+0209   0080           01054     movwf INDF
+Message[305]: Using default destination of 1 (file).
+020A   0A84           01055     incf  FSR
+020B   3007           01056     movlw 0x07
+020C   0080           01057     movwf INDF
+Message[305]: Using default destination of 1 (file).
+020D   0A84           01058     incf  FSR
+020E   3005           01059     movlw 0x05
+020F   0080           01060     movwf INDF
+Message[305]: Using default destination of 1 (file).
+0210   0A84           01061     incf  FSR
+0211   3003           01062     movlw 0x03
+0212   0080           01063     movwf INDF
+                      01064 
+                      01065    
+0213   0008           01066     return
+0214                  01067 jour    
+0214   1048           01068     bcf   tarif_f,0
+0215   3034           01069     movlw ct1
+0216   0084           01070     movwf FSR
+0217   3000           01071     movlw 0x00
+0218   0080           01072     movwf INDF
+Message[305]: Using default destination of 1 (file).
+0219   0A84           01073     incf  FSR
+021A   3001           01074     movlw 0x01
+021B   0080           01075     movwf INDF
+Message[305]: Using default destination of 1 (file).
+021C   0A84           01076     incf  FSR
+021D   3004           01077     movlw 0x04
+021E   0080           01078     movwf INDF
+Message[305]: Using default destination of 1 (file).
+021F   0A84           01079     incf  FSR
+0220   3000           01080     movlw 0x00
+0221   0080           01081     movwf INDF
+Message[305]: Using default destination of 1 (file).
+0222   0A84           01082     incf  FSR
+0223   3001           01083     movlw 0x01
+0224   0080           01084     movwf INDF
+                      01085 
+0225   3039           01086     movlw ct2
+0226   0084           01087     movwf FSR
+0227   3000           01088     movlw 0x00
+0228   0080           01089     movwf INDF
+MPASM  5.16                          MAIN.ASM   1-11-2016  10:49:42         PAGE 23
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+Message[305]: Using default destination of 1 (file).
+0229   0A84           01090     incf  FSR
+022A   3001           01091     movlw 0x01
+022B   0080           01092     movwf INDF
+Message[305]: Using default destination of 1 (file).
+022C   0A84           01093     incf  FSR
+022D   3004           01094     movlw 0x04
+022E   0080           01095     movwf INDF
+Message[305]: Using default destination of 1 (file).
+022F   0A84           01096     incf  FSR
+0230   3000           01097     movlw 0x00
+0231   0080           01098     movwf INDF
+Message[305]: Using default destination of 1 (file).
+0232   0A84           01099     incf  FSR
+0233   3002           01100     movlw 0x02
+0234   0080           01101     movwf INDF
+                      01102 
+0235   303E           01103     movlw ct3
+0236   0084           01104     movwf FSR
+0237   3000           01105     movlw 0x00
+0238   0080           01106     movwf INDF
+Message[305]: Using default destination of 1 (file).
+0239   0A84           01107     incf  FSR
+023A   3001           01108     movlw 0x01
+023B   0080           01109     movwf INDF
+Message[305]: Using default destination of 1 (file).
+023C   0A84           01110     incf  FSR
+023D   3004           01111     movlw 0x04
+023E   0080           01112     movwf INDF
+Message[305]: Using default destination of 1 (file).
+023F   0A84           01113     incf  FSR
+0240   3000           01114     movlw 0x00
+0241   0080           01115     movwf INDF
+Message[305]: Using default destination of 1 (file).
+0242   0A84           01116     incf  FSR
+0243   3003           01117     movlw 0x03
+0244   0080           01118     movwf INDF
+                      01119 
+                      01120    
+0245   0008           01121     return
+                      01122     
+                      01123     
+                      01124    
+                      01125 
+                      01126     
+                      01127     
+                      01128  
+                      01129 
+                      01130     
+                      01131 
+                      01132    ;-----------------------------------------------------------------------------------------
+                      01133 ; Temporisation 350ms, 500ms, 1s
+                      01134 ;-----------------------------------------------------------------------------------------
+MPASM  5.16                          MAIN.ASM   1-11-2016  10:49:42         PAGE 24
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      01135 
+0246                  01136 Tempo_1s:
+0246   3064           01137         movlw   d'100'          ;1 cycle
+0247   00B0           01138         movwf   temp3           ;1 cycle
+0248   2A4F           01139         goto    tempo2          ;2 cycles
+                      01140 
+0249                  01141 Tempo_500ms:
+0249   3032           01142         movlw   d'50'           ;1 cycle
+024A   00B0           01143         movwf   temp3           ;1 cycle
+024B   2A4F           01144         goto    tempo2          ;2 cycles
+                      01145 
+024C                  01146 Tempo_350ms:
+024C   3023           01147         movlw   d'35'           ;1 cycle
+024D   00B0           01148         movwf   temp3           ;1 cycle
+024E   2A4F           01149         goto    tempo2          ;2 cycles
+                      01150 
+024F                  01151 tempo2:
+024F   225F           01152         call    Tempo_10ms      ;
+Message[305]: Using default destination of 1 (file).
+0250   0BB0           01153         decfsz  temp3           ;2 cycles si temp1=0 sinon 1 cycle
+0251   2A4F           01154         goto    tempo2          ;2 cycles
+0252   0008           01155         return                  
+                      01156 
+                      01157 ;-----------------------------------------------------------------------------------------
+                      01158 ; Temporisation 10ms, 30ms, 100ms, 150ms, 200ms
+                      01159 ;-----------------------------------------------------------------------------------------
+                      01160 
+0253                  01161 Tempo_200ms:
+0253   30C8           01162         movlw   d'200'          ;1 cycle
+0254   00B1           01163         movwf   temp2           ;1 cycle
+0255   2A61           01164         goto    tempo1          ;2 cycles
+                      01165 
+0256                  01166 Tempo_150ms:
+0256   3096           01167         movlw   d'150'          ;1 cycle
+0257   00B1           01168         movwf   temp2           ;1 cycle
+0258   2A61           01169         goto    tempo1          ;2 cycles
+                      01170 
+0259                  01171 Tempo_100ms:
+0259   3064           01172         movlw   d'100'          ;1 cycle
+025A   00B1           01173         movwf   temp2           ;1 cycle
+025B   2A61           01174         goto    tempo1          ;2 cycles
+                      01175 
+025C                  01176 Tempo_30ms:
+025C   301E           01177         movlw   d'30'           ;1 cycle
+025D   00B1           01178         movwf   temp2           ;1 cycle
+025E   2A61           01179         goto    tempo1          ;2 cycles
+                      01180 
+025F                  01181 Tempo_10ms:
+025F   300A           01182         movlw   d'10'           ;1 cycle
+0260   00B1           01183         movwf   temp2           ;1 cycle
+                      01184         
+0261                  01185 tempo1:
+0261   2268           01186         call    Tempo_1ms       ;
+MPASM  5.16                          MAIN.ASM   1-11-2016  10:49:42         PAGE 25
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+Message[305]: Using default destination of 1 (file).
+0262   0BB1           01187         decfsz  temp2           ;2 cycles si temp1=0 sinon 1 cycle
+0263   2A61           01188         goto    tempo1          ;2 cycles
+0264   0008           01189         return                  
+                      01190 
+                      01191 ;-----------------------------------------------------------------------------------------
+                      01192 ; Temporisation 1530us
+                      01193 ;-----------------------------------------------------------------------------------------
+                      01194 
+                      01195 
+                      01196 
+0265                  01197 Tempo_1530us:                   ;1530us soit 1530 cycles        (temp1*4)+4
+0265   2268           01198         call    Tempo_1ms
+0266   226B           01199         call    Tempo_530us
+                      01200 
+0267   0008           01201         return
+                      01202 
+                      01203 
+                      01204 
+                      01205 ;-----------------------------------------------------------------------------------------
+                      01206 ; Temporisation 1ms, 530us, 250us
+                      01207 ;-----------------------------------------------------------------------------------------
+                      01208 
+                      01209 
+                      01210 
+0268                  01211 Tempo_1ms:                      ;1ms soit 1000 cycles   (temp1*4)+4
+0268   30F9           01212         movlw   d'249'          ;1 cycle
+0269   00B2           01213         movwf   temp1           ;1 cycle
+026A   2A71           01214         goto    tempo           ;2 cycles
+                      01215 
+026B                  01216 Tempo_530us:                    ;532us soit 532 cycles  (temp1*4)+4
+026B   3084           01217         movlw   d'132'          ;1 cycle
+026C   00B2           01218         movwf   temp1           ;1 cycle
+026D   2A71           01219         goto    tempo           ;2 cycles
+                      01220 
+026E                  01221 Tempo_250us:                    ;532us soit 532 cycles  (temp1*4)+4
+026E   303E           01222         movlw   d'62'           ;1 cycle
+026F   00B2           01223         movwf   temp1           ;1 cycle
+0270   2A71           01224         goto    tempo           ;2 cycles
+                      01225         
+0271                  01226 tempo:
+0271   0000           01227         nop                     ;1 cycle
+Message[305]: Using default destination of 1 (file).
+0272   0BB2           01228         decfsz  temp1           ;2 cycles si temp1=0 sinon 1 cycle
+0273   2A71           01229         goto    tempo           ;2 cycles
+0274   0008           01230         return
+                      01231 
+                      01232 
+                      01233 ;-----------------------------------------------------------------------------------------
+                      01234 ; Temporisation 11us, 39us, 43us
+                      01235 ;-----------------------------------------------------------------------------------------
+                      01236 
+0275                  01237 Tempo_43us:                     ;43us soit 43 cycles    (temp1*3)+2
+MPASM  5.16                          MAIN.ASM   1-11-2016  10:49:42         PAGE 26
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0275   300E           01238         movlw   d'14'           ;1 cycle
+0276   00B2           01239         movwf   temp1           ;1 cycle
+0277                  01240 Tempo_43:
+Message[305]: Using default destination of 1 (file).
+0277   0BB2           01241         decfsz  temp1           ;2 cycles si temp1=0 sinon 1 cycle
+0278   2A77           01242         goto    Tempo_43        ;2 cycles
+0279   0008           01243         return
+                      01244 
+                      01245 
+027A                  01246 Tempo_39us:                     ;39us soit 39 cycles    (temp1*3)+2
+027A   300C           01247         movlw   d'12'           ;1 cycle
+027B   00B2           01248         movwf   temp1           ;1 cycle
+027C                  01249 Tempo_39:
+Message[305]: Using default destination of 1 (file).
+027C   0BB2           01250         decfsz  temp1           ;2 cycles si temp1=0 sinon 1 cycle
+027D   2A7C           01251         goto    Tempo_39        ;2 cycles
+027E   0008           01252         return
+                      01253 
+027F                  01254 Tempo_12us:                     ;11us soit 11 cycles    (temp1*3)+3
+027F   3003           01255         movlw   d'3'            ;1 cycle
+0280   00B2           01256         movwf   temp1           ;1 cycle
+0281   0000           01257         nop
+0282                  01258 Tempo_12:
+Message[305]: Using default destination of 1 (file).
+0282   0BB2           01259         decfsz  temp1           ;2 cycles si temp1=0 sinon 1 cycle
+0283   2A87           01260         goto    Tempo_11        ;2 cycles
+0284   0008           01261         return
+                      01262 
+                      01263 
+0285                  01264 Tempo_11us:                     ;11us soit 11 cycles    (temp1*3)+2
+0285   3003           01265         movlw   d'3'            ;1 cycle
+0286   00B2           01266         movwf   temp1           ;1 cycle
+0287                  01267 Tempo_11:
+Message[305]: Using default destination of 1 (file).
+0287   0BB2           01268         decfsz  temp1           ;2 cycles si temp1=0 sinon 1 cycle
+0288   2A87           01269         goto    Tempo_11        ;2 cycles
+0289   0008           01270         return
+                      01271  
+                      01272     
+                      01273 
+                      01274     
+                      01275 
+                      01276         END                     ; directive fin de programme
+MPASM  5.16                          MAIN.ASM   1-11-2016  10:49:42         PAGE 27
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+ACKDT                             00000005
+ACKEN                             00000004
+ACKSTAT                           00000006
+ADCON0                            0000001F
+ADCON1                            0000009F
+ADCON1VAL                         00000006
+ADCS0                             00000006
+ADCS1                             00000007
+ADCS2                             00000006
+ADDEN                             00000003
+ADFM                              00000007
+ADIE                              00000006
+ADIF                              00000006
+ADON                              00000000
+ADRESH                            0000001E
+ADRESL                            0000009E
+BANK0                             
+BANK1                             
+BANK2                             
+BANK3                             
+BCLIE                             00000003
+BCLIF                             00000003
+BF                                00000000
+BRGH                              00000002
+C                                 00000000
+C1INV                             00000004
+C1OUT                             00000006
+C2INV                             00000005
+C2OUT                             00000007
+CCP1CON                           00000017
+CCP1IE                            00000002
+CCP1IF                            00000002
+CCP1M0                            00000000
+CCP1M1                            00000001
+CCP1M2                            00000002
+CCP1M3                            00000003
+CCP1X                             00000005
+CCP1Y                             00000004
+CCP2CON                           0000001D
+CCP2IE                            00000000
+CCP2IF                            00000000
+CCP2M0                            00000000
+CCP2M1                            00000001
+CCP2M2                            00000002
+CCP2M3                            00000003
+CCP2X                             00000005
+CCP2Y                             00000004
+CCPR1H                            00000016
+CCPR1L                            00000015
+CCPR2H                            0000001C
+CCPR2L                            0000001B
+CHS0                              00000003
+CHS1                              00000004
+MPASM  5.16                          MAIN.ASM   1-11-2016  10:49:42         PAGE 28
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+CHS2                              00000005
+CIS                               00000003
+CKE                               00000006
+CKP                               00000004
+CM0                               00000000
+CM1                               00000001
+CM2                               00000002
+CMCON                             0000009C
+CMIE                              00000006
+CMIF                              00000006
+CREN                              00000004
+CSRC                              00000007
+CVR0                              00000000
+CVR1                              00000001
+CVR2                              00000002
+CVR3                              00000003
+CVRCON                            0000009D
+CVREN                             00000007
+CVROE                             00000006
+CVRR                              00000005
+D                                 00000005
+DATA_ADDRESS                      00000005
+DC                                00000001
+DIRPORTB                          00000000
+DIRPORTC                          00000000
+D_A                               00000005
+EEADR                             0000010D
+EEADRH                            0000010F
+EECON1                            0000018C
+EECON2                            0000018D
+EEDATA                            0000010C
+EEDATH                            0000010E
+EEIE                              00000004
+EEIF                              00000004
+EEPGD                             00000007
+F                                 00000001
+FERR                              00000002
+FSR                               00000004
+FSR_temp                          00000072
+GCEN                              00000007
+GIE                               00000007
+GO                                00000002
+GO_DONE                           00000002
+I2C_DATA                          00000005
+I2C_READ                          00000002
+I2C_START                         00000003
+I2C_STOP                          00000004
+INDF                              00000000
+INTCON                            0000000B
+INTCONVAL                         00000060
+INTE                              00000004
+INTEDG                            00000006
+INTF                              00000001
+MPASM  5.16                          MAIN.ASM   1-11-2016  10:49:42         PAGE 29
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+IRP                               00000007
+NOT_A                             00000005
+NOT_ADDRESS                       00000005
+NOT_BO                            00000000
+NOT_BOR                           00000000
+NOT_DONE                          00000002
+NOT_PD                            00000003
+NOT_POR                           00000001
+NOT_RBPU                          00000007
+NOT_RC8                           00000006
+NOT_T1SYNC                        00000002
+NOT_TO                            00000004
+NOT_TX8                           00000006
+NOT_W                             00000002
+NOT_WRITE                         00000002
+OERR                              00000001
+OPTIONVAL                         00000007
+OPTION_REG                        00000081
+P                                 00000004
+PCFG0                             00000000
+PCFG1                             00000001
+PCFG2                             00000002
+PCFG3                             00000003
+PCL                               00000002
+PCLATH                            0000000A
+PCLATH_temp                       00000073
+PCON                              0000008E
+PEIE                              00000006
+PEN                               00000002
+PIE1                              0000008C
+PIE1VAL                           00000000
+PIE2                              0000008D
+PIE2VAL                           00000000
+PIR1                              0000000C
+PIR2                              0000000D
+PORTA                             00000005
+PORTB                             00000006
+PORTC                             00000007
+PR2                               00000092
+PS0                               00000000
+PS1                               00000001
+PS2                               00000002
+PSA                               00000003
+R                                 00000002
+RBIE                              00000003
+RBIF                              00000000
+RC8_9                             00000006
+RC9                               00000006
+RCD8                              00000000
+RCEN                              00000003
+RCIE                              00000005
+RCIF                              00000005
+RCREG                             0000001A
+MPASM  5.16                          MAIN.ASM   1-11-2016  10:49:42         PAGE 30
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+RCSTA                             00000018
+RD                                00000000
+READ_WRITE                        00000002
+REEPROM                           
+RP0                               00000005
+RP1                               00000006
+RSEN                              00000001
+RX9                               00000006
+RX9D                              00000000
+R_W                               00000002
+S                                 00000003
+SEN                               00000000
+SMP                               00000007
+SPBRG                             00000099
+SPEN                              00000007
+SREN                              00000005
+SSPADD                            00000093
+SSPBUF                            00000013
+SSPCON                            00000014
+SSPCON2                           00000091
+SSPEN                             00000005
+SSPIE                             00000003
+SSPIF                             00000003
+SSPM0                             00000000
+SSPM1                             00000001
+SSPM2                             00000002
+SSPM3                             00000003
+SSPOV                             00000006
+SSPSTAT                           00000094
+STATUS                            00000003
+SYNC                              00000004
+T0CS                              00000005
+T0IE                              00000005
+T0IF                              00000002
+T0SE                              00000004
+T1CKPS0                           00000004
+T1CKPS1                           00000005
+T1CON                             00000010
+T1INSYNC                          00000002
+T1OSCEN                           00000003
+T1SYNC                            00000002
+T2CKPS0                           00000000
+T2CKPS1                           00000001
+T2CON                             00000012
+TMR0                              00000001
+TMR0IE                            00000005
+TMR0IF                            00000002
+TMR1CS                            00000001
+TMR1H                             0000000F
+TMR1IE                            00000000
+TMR1IF                            00000000
+TMR1L                             0000000E
+TMR1ON                            00000000
+MPASM  5.16                          MAIN.ASM   1-11-2016  10:49:42         PAGE 31
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+TMR2                              00000011
+TMR2IE                            00000001
+TMR2IF                            00000001
+TMR2ON                            00000002
+TOUTPS0                           00000003
+TOUTPS1                           00000004
+TOUTPS2                           00000005
+TOUTPS3                           00000006
+TRISA                             00000085
+TRISB                             00000086
+TRISC                             00000087
+TRMT                              00000001
+TX8_9                             00000006
+TX9                               00000006
+TX9D                              00000000
+TXD8                              00000000
+TXEN                              00000005
+TXIE                              00000004
+TXIF                              00000004
+TXREG                             00000019
+TXSTA                             00000098
+Tempo_100ms                       00000259
+Tempo_10ms                        0000025F
+Tempo_11                          00000287
+Tempo_11us                        00000285
+Tempo_12                          00000282
+Tempo_12us                        0000027F
+Tempo_150ms                       00000256
+Tempo_1530us                      00000265
+Tempo_1ms                         00000268
+Tempo_1s                          00000246
+Tempo_200ms                       00000253
+Tempo_250us                       0000026E
+Tempo_30ms                        0000025C
+Tempo_350ms                       0000024C
+Tempo_39                          0000027C
+Tempo_39us                        0000027A
+Tempo_43                          00000277
+Tempo_43us                        00000275
+Tempo_500ms                       00000249
+Tempo_530us                       0000026B
+UA                                00000001
+W                                 00000000
+WCOL                              00000007
+WEEPROM                           
+WR                                00000001
+WREN                              00000002
+WRERR                             00000003
+Z                                 00000002
+_BODEN_OFF                        00003FBF
+_BODEN_ON                         00003FFF
+_CPD_OFF                          00003FFF
+_CPD_ON                           00003EFF
+MPASM  5.16                          MAIN.ASM   1-11-2016  10:49:42         PAGE 32
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+_CP_ALL                           00001FFF
+_CP_OFF                           00003FFF
+_DEBUG_OFF                        00003FFF
+_DEBUG_ON                         000037FF
+_HS_OSC                           00003FFE
+_LP_OSC                           00003FFC
+_LVP_OFF                          00003F7F
+_LVP_ON                           00003FFF
+_PWRTE_OFF                        00003FFF
+_PWRTE_ON                         00003FF7
+_RC_OSC                           00003FFF
+_WDT_OFF                          00003FFB
+_WDT_ON                           00003FFF
+_WRT_1FOURTH                      00003BFF
+_WRT_256                          00003DFF
+_WRT_HALF                         000039FF
+_WRT_OFF                          00003FFF
+_XT_OSC                           00003FFD
+__16F876A                         00000001
+__DEBUG                           1
+b1                                00000145
+b2                                00000149
+c1                                0000015B
+c10                               0000018F
+c11                               00000174
+c12                               00000190
+c13                               00000179
+c14                               00000191
+c15                               0000017E
+c16                               00000192
+c17                               00000183
+c18                               00000193
+c19                               00000188
+c2                                0000018B
+c20                               00000194
+c3                                00000160
+c4                                0000018C
+c5                                00000165
+c6                                0000018D
+c7                                0000016A
+c8                                0000018E
+c9                                0000016F
+clien                             PORTA,2
+compt                             00000044
+compt1                            00000045
+compt2                            00000046
+compt3                            00000047
+convert                           00000156
+ct1                               00000034
+ct2                               00000039
+ct3                               0000003E
+d1                                0000014E
+disptable                         00000033
+MPASM  5.16                          MAIN.ASM   1-11-2016  10:49:42         PAGE 33
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+e10                               0000008F
+e20                               000000DE
+e30                               000000DB
+e31                               000000BF
+e40                               000000B0
+e41                               00000086
+e50                               000000D5
+e6                                000000AA
+e61                               000000B3
+efface                            PORTA,3
+g1                                000001A3
+g10                               000001B1
+g11                               000001B4
+g12                               000001BA
+g13                               000001BD
+g14                               000001C3
+g15                               000001C6
+g2                                000001A8
+g3                                000001AD
+h1                                0000019D
+inc                               00000195
+init                              000000EC
+intad                             000000E2
+intbc                             000000EA
+intccp1                           000000E6
+intccp2                           000000EB
+inteprom                          000000E9
+intrb0                            000000DF
+intrb4                            000000E0
+intrc                             000000E3
+intssp                            000000E5
+intsw1                            00000014
+intsw2                            0000001A
+intsw3                            00000020
+intsw4                            0000002B
+intsw5                            00000033
+intsw6                            0000003B
+intsw7                            00000044
+intsw8                            0000004D
+intsw9                            00000056
+intswA                            0000005F
+intswB                            00000068
+intswC                            00000071
+inttmr0                           0000007D
+inttmr1                           000000E8
+inttmr2                           000000E7
+inttx                             000000E4
+jour                              00000214
+n2                                00000124
+n3                                00000132
+n4                                00000135
+n5                                00000139
+n6                                0000011B
+MPASM  5.16                          MAIN.ASM   1-11-2016  10:49:42         PAGE 34
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+n7                                0000011E
+n8                                00000122
+n9                                00000128
+nuit                              000001E3
+onoff                             PORTA,0
+reset                             0000019E
+reset1                            000001AE
+reset2                            000001B7
+reset3                            000001C0
+resetjour                         000001D6
+resetnuit                         000001C9
+restorereg                        00000074
+s1                                0000013C
+s2                                0000013F
+senser                            PORTA,4
+senser_c                          00000049
+start                             00000106
+status_temp                       00000071
+sw                                00000043
+tarif                             PORTA,1
+tarif_f                           00000048
+temp1                             00000032
+temp2                             00000031
+temp3                             00000030
+tempo                             00000271
+tempo1                            00000261
+tempo2                            0000024F
+val0                              000000C0
+val1                              000000F9
+val2                              000000A4
+val3                              000000B0
+val4                              00000099
+val5                              00000092
+val6                              00000082
+val7                              000000F8
+val8                              00000080
+val9                              00000090
+valv                              000000FF
+var1                              0000006E
+w_temp                            00000070
+
+
+MEMORY USAGE MAP ('X' = Used,  '-' = Unused)
+
+0000 : X---XXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0040 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+MPASM  5.16                          MAIN.ASM   1-11-2016  10:49:42         PAGE 35
+
+
+MEMORY USAGE MAP ('X' = Used,  '-' = Unused)
+
+
+0080 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+00C0 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0100 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0140 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0180 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+01C0 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0200 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0240 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0280 : XXXXXXXXXX------ ---------------- ---------------- ----------------
+2000 : -------X-------- ---------------- ---------------- ----------------
+
+All other memory blocks unused.
+
+Program Memory Words Used:   647
+Program Memory Words Free:  7545
+
+
+Errors   :     0
+Warnings :     7 reported,     0 suppressed
+Messages :    75 reported,     0 suppressed
+
+
